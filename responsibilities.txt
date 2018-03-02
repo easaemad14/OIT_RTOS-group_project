@@ -1,0 +1,25 @@
+This contains the general overview of each team members responsibilities for
+the project, categorized in a human understandable fashion, which doesn't 
+necessarily represent any given FreeRTOS task, structure, or file. Please see
+the "Author" field at the top of each source and header file for clarification
+if you care for a more specific definition.
+
+
+Controllers - Charles:
+    There are several elevator controllers (e.g. CLI, UART, etc.) that will be
+    defined as FreeRTOS tasks. These will simulate user control from a floor
+    level, emergency controls (from outside of an elevator), and elevator
+    parameter setting.
+
+Elevator - Steven:
+    The elevator will be implemented as a singleton FreeRTOS task, however is
+    responsible for spawning additional tasks as needed and controlling 
+    peripherals such as LEDs. The logic behind the elevator is complicated and
+    is a large task within itself.
+
+Structural support - Easa:
+    All of the work listed above requires function calls to initialize and
+    drive hardware, as well as segregation from each other component. Easa
+    will be in charge of designing the files and supporting the work of all
+    team members.
+

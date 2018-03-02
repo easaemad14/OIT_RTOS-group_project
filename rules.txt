@@ -1,0 +1,24 @@
+The following are the general rules and guidelines for project development
+and implementation. Draconian code formatting standards emphasize form over 
+function; that's messed up. The following standards are MPLab IDE defaults:
+
+1. Right margin is set to 80; try not to write lines longer than this.
+ a.There are obviously exceptions to this, such as URIs
+ b. Indent by four columns and TABs are four spaces
+
+2. All braces for function declarations are on their own line (this is not
+    the default, but matches common standard)
+ a. If you need a scope within a case statement (to combat a cross-
+    initialization), they go on their own line to maintain block formatting.
+    This is also not the default.
+ b. All other braces are on the same line.
+ c. Use general rule of thumb for readability: if you think it should have
+    parentheses around logic, include it. If you are in doubt include
+    parentheses.
+
+3. There is no need for spaces after any form control
+
+4.  There is no such thing as self-documenting code.
+ a. Every function should contain a comment for what that function does.
+ b. If the function returns a type, denote what each case represents.
+
