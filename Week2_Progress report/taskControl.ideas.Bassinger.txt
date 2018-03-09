@@ -1,0 +1,31 @@
+CST347 Team Project : That team from Wilsonville
+Member : C Bassinger
+Responsibilty : Controller Tasks
+Content of Report : Function prototypes and general notes
+
+taskControl :	//created on system boot, relays 'outside' user input to the elevator
+	
+	initUART();	//create UART task and initialize it
+	initCLI();	//create / init CLI
+	initQueue();	//possibly use a queue for myself to handle input cases
+			//NOTE:  I am not sure where keypress gets debounced - I assume in CLI/UART?
+	initElevator();	//create elevator task
+
+	while(1) {	//NOTE:  Should I get rid of this and just put all that init stuff above in our 				//main file?
+		checkCLI();	//check for CLI input
+		checkUART();	//check for UART input
+		
+		if (CLI.input == ES) { //emergency stop gets top priority
+			//output some message here?
+			elevator.move(emergency_stop);	//tell elevator to execute emergency stop
+		else
+			switch (user_input) {
+				case some_input:
+					//output some message here?
+					elevator.move(valid_user_input); //handle a normal call
+				default:
+					elevator.move(no_calls); //idle mode for elevator
+			}
+		}
+
+//NOTE:  It would be cool to ENUM the locations for elevator to move to, so its easier to pass commands
