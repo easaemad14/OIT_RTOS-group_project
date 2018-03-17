@@ -8,4 +8,4 @@ SUBJECT: Week 3 Progress of Term Project
 
 Week 3 has seen continiued slow progress as the Wilsonville Team continues to work on the delayed Labs. With the addition of upcoming finals and other class projects it appears that the project may not have moved at all. Any new content an updates will be posted into the week 3 folder for review. 
 
-Steven Morales: Aside from creating a base project for the Elevator task (not to be confused with the elevator project as a whole). I have produced no new code for the repository. I have been focused heavily on the last lab and on clearing out other small homeworks to make room for this workload.
+Steven Morales: Aside from creating a base project for the Elevator task (not to be confused with the elevator project as a whole). I have produced no new code for the repository. I have been focused heavily on the last lab and on clearing out other small homeworks to make room for this workload. Uploaded the empty elevator functions and initial "Elevator.x" files for review.
