@@ -11,7 +11,7 @@
 *
 ************************************************************/
 
-#include "myTasks.h"
+#include "elevator.h"
 
 // Creating a flag to separate production code from whatever else I need just
 // simulate coms from other tasks and variables. comment out to make ready for release
@@ -38,7 +38,7 @@ uint8_t max_accel = 2;      // ft/(s^2)
 //
 uint16_t brakingdistance( void /*will be void until otherwise needed*/)
 {
-    return 
+    return 0;
 }
 
 // Function (not task) to assemble the queues, semaphores and any other 

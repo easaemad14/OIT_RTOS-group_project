@@ -15,7 +15,7 @@
         <itemPath>FreeRTOS/Source/include/semphr.h</itemPath>
         <itemPath>FreeRTOS/Source/include/task.h</itemPath>
       </logicalFolder>
-      <itemPath>Lab.X/include/myTasks.h</itemPath>
+      <itemPath>Lab.X/include/elevator.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -34,7 +34,7 @@
         <itemPath>FreeRTOS/Source/tasks.c</itemPath>
       </logicalFolder>
       <itemPath>Lab.X/src/main.c</itemPath>
-      <itemPath>Lab.X/src/myTasks.c</itemPath>
+      <itemPath>Lab.X/src/elevator.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"

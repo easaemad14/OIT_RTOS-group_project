@@ -1,6 +1,6 @@
-build/default/production/Lab.X/src/myTasks.o:  \
-Lab.X/src/myTasks.c  \
- Lab.X/include/myTasks.h  \
+build/default/production/Lab.X/src/elevator.o:  \
+Lab.X/src/elevator.c  \
+ Lab.X/include/elevator.h  \
 FreeRTOS/Source/include/FreeRTOS.h  \
  Lab.X/include/FreeRTOSConfig.h  \
 FreeRTOS/Source/include/projdefs.h  \
