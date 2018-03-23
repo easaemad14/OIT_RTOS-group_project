@@ -28,9 +28,13 @@
 // This section will have basic defines and variables as outlined   //           
 // in the term project instructions                                 //
 //                                                                  //
-#define PENT_HOUSE_2 52
-#define PENT_HOUSE_1 51
-#define GROUND_FLOOR 0                                                                  
+#define PENT_HOUSE_2    52
+#define PENT_HOUSE_1    51
+#define GROUND_FLOOR    0
+
+#define TOP_FLOOR       PENT_HOUSE_2
+#define BOTTOM_FLOOR    GROUND_FLOOR
+#define HALF_WAY       ( ( TOP_FLOOR - BOTTOM_FLOOR) >> 1 )
 
 // Defined some basic bool variables since there is no bool type
 // already available in FreeRTOS
@@ -53,20 +57,8 @@ typedef uint8_t bool_t;
 #define CLOSE_DOOR  0x4     //RC2
 #define PORT_C_MASK 0x6     //Filtering for the 2 PORT D switches
 
-
-
-//******************************************************************//
-// This section will be for variable that elevator is responsible   //
-// for calculating                                                  //
-//                                                                  //
-static  uint16_t    height = PENTHOUSE;
-#define FLOOR       (height/10);
-
-uint16_t CurrentHeight(void)
-{
-    return height;
-}
-
+static int8_t current_speed = 0;
+static int8_t current_accel = 0; 
 
 
 //**************************************************//
@@ -79,6 +71,8 @@ uint16_t CurrentHeight(void)
 uint8_t max_speed = 20;     // ft/second
 uint8_t max_accel = 2;      // ft/(s^2)
 
+
+
 bool_t up = FALSE;
 
 #endif
@@ -90,9 +84,78 @@ bool_t up = FALSE;
 //                                                                  //
 #ifndef DEBUG_MODE
 
-
+/*No production code yet*/
 
 #endif
+
+//******************************************************************//
+// This section will be for variable that elevator is responsible   //
+// for calculating                                                  //
+//                                                                  //
+static  int16_t    height = GROUND_FLOOR;
+#define CURRENT_FLOOR       (height/10)
+
+
+
+//Funtion resets accel to a known state
+//
+void Coast(void){ current_accel = 0; }
+
+void MoveUp( void )
+{
+    Coast();
+    current_accel += max_accel;
+}
+
+void MoveDown( void )
+{
+    Coast();
+    current_accel -= max_accel;
+}
+
+void Brake(void )
+{
+    ;
+}
+
+//**********************************************************************/
+//Need to have some kinematics in here to update stats as neccessary    /
+//                                                                      /
+// Update height first                                                  /
+// Then update speed                                                    /
+//
+
+int16_t CurrentHeight(void)
+{
+    return height;
+}
+
+int8_t CurrentSpeed()
+{
+    return current_speed;
+}
+
+int8_t CuurentAccel(void)
+{
+    return current_accel;
+}
+
+static void newSpeed ( void )
+{
+    ;
+}
+
+static void NewHeight(void )
+{
+    if (up == TRUE)
+    {
+        height += 
+    }
+    else
+    {
+        
+    }
+}
 
 
 
@@ -110,7 +173,7 @@ static uint16_t brakingDistance( void /*will be void until otherwise needed*/)
 //
 static uint16_t brakingMark( void )
 {
-    return (up == TRUE) ? (brakingDistance()) : ( PENT_HOUSE_2 -  brakingDistance());
+    return ( (up == TRUE) ? (brakingDistance()) : ( PENT_HOUSE_2 -  brakingDistance()) );
 }
 
 // Function (not task) to assemble the queues, semaphores and any other 

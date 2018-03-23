@@ -25,8 +25,12 @@ void InitElevator(void * some_parameter);
 //
 uint16_t CurrentHeight(void);
 
+//returns the current speed
+//
+int8_t CurrentSpeed();
 
+// Returns the current acceleration
 //
-//
+int8_t CuurentAccel(void);
 
 #endif //MY_TASKS_H
