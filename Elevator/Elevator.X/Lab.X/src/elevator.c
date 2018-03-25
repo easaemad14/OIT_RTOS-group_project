@@ -111,7 +111,7 @@ static  int16_t    height = GROUND_FLOOR;
 //
 void SustainSpeed(void){ current_accel = 0; }
 
-
+void 
 
 //**********************************************************************/
 // Need to have some kinematics in here to update status as necessary   /
@@ -142,7 +142,6 @@ int8_t CuurentAccel(void)
 }
 
 
-
 // function calculates braking distance necessary for stopping 
 // safely based on the current acceleration and max speed.
 //
@@ -152,37 +151,27 @@ static uint16_t brakingDistance( void /*will be void until otherwise needed*/)
 }
 
 
-// Need to calculate the threshold to begine the actual breaking
+// Need to calculate the threshold to begin the actual braking
 //
-static uint16_t brakingMark( void )
+static uint16_t brakingMark( uint8_t floor )
 {
-    return ( (up == TRUE) ? (brakingDistance()) : ( PENT_HOUSE_2 -  brakingDistance()) );
+    return ( (up == TRUE) ? ( floor - brakingDistance()) : brakingDistance() );
 }
 
-// Function (not task) to assemble the queues, semaphores and any other 
-// necessary interprocess communication for the 
-//
-void SetupQueuesAndStuff(void)
-{
-    
-}
-
-
-/*
- * All tasks will be instantiated for the moment with unused parameters 
- */
-
-// This will figure out the direction speed and
-// necessary stop distance of the movement. Will not update
-// its speed or acceleration settings while already moving, updates values at
-// the last second before departing the current floor.
-//
+//**************************************************************************//
+// This will figure out the direction speed and necessary stop              //
+// updates values at distance of the movement. Will not update              //
+// its max_speed or acceleration settings while already moving;             //
+// will wait til the last second before departing the current floor.        //
+//                                                                          //
 void MoveTask(void * params)
 {
     
     
     while(1)
     {
+        
+        
         ;
     }
 }
@@ -215,7 +204,9 @@ void Close( uint8_t * doors  )
     PORTDCLR = --(*doors);
 }
 
-
+// Button Scanner will check the queue(s) for saved button presses
+// and take appropriate action depending on the button(s) in the queue(s)
+//
 void ButtonScanner(void * Params)
 {
     while(1)
@@ -224,8 +215,10 @@ void ButtonScanner(void * Params)
     }
 }
 
-
-// Actually operating door
+//*********************************************************************//
+// Door task will open the door over three seconds hold for 5 seconds
+// then close the door over 3 second as long as there is no interference
+// 
 //
 void DoorTask(void * usused)
 {
@@ -251,9 +244,9 @@ void DoorTask(void * usused)
     }
 }
 
-//**************************************************//
-// Just instantiates a Door task                    //
-//                                                  //
+
+// Just instantiates a Door task
+//
 void BuildDoors(void)
 {
     BaseType_t success = xTaskCreate(

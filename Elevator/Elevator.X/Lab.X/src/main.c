@@ -1,5 +1,9 @@
-#define _SUPPRESS_PLIB_WARNING 1
-#define _DISABLE_OPENADC10_CONFIGPORT_WARNING 1
+#ifndef _SUPPRESS_PLIB_WARNING
+#define _SUPPRESS_PLIB_WARNING
+#endif
+#ifndef _DISABLE_OPENADC10_CONFIGPORT_WARNING
+#define _DISABLE_OPENADC10_CONFIGPORT_WARNING
+#endif
 
 /* Standard includes. */
 #include <stdint.h>
@@ -11,50 +15,25 @@
 #include "timers.h"
 #include "queue.h"
 
-#include "elevator.h"
-
 /* Hardware include. */
 #include <xc.h>
+
+/* My added files */
+#include "leddrv.h"
+#include "swdrv.h"
+#include "uartdrv.h"
+#include "elevator.h"
+#include "controllers.h"
 
 /* Hardware configuration. */
 #pragma config FPLLMUL = MUL_20, FPLLIDIV = DIV_2, FPLLODIV = DIV_1, FWDTEN = OFF
 #pragma config POSCMOD = HS, FNOSC = PRIPLL, FPBDIV = DIV_2, CP = OFF, BWP = OFF
 #pragma config PWP = OFF /*, UPLLEN = OFF, FSRSSEL = PRIORITY_7 */
 
-/* Time is measured in "ticks".  The tick rate is set by the configTICK_RATE_HZ
-configuration parameter (defined in FreeRTOSConfig.h).  If configTICK_RATE_HZ
-is equal to or less than 1000 (1KHz) then portTICK_RATE_MS can be used to 
-convert a time in milliseconds into a time in ticks. */
-#define mainTOGGLE_PERIOD ( 200UL / portTICK_RATE_MS )
 
-/* Performs the hardware initialization to ready the hardware to run this example */
-static void prvSetupHardware(void);
-
-// static const xTaskParameter_t xTaskControlParameters = { 0, 0 }; /*need something to pass in */
-
-/*-----------------------------------------------------------*/
-int main(void)
-{
-    /* Perform any hardware initialization that may be necessary. */
-    prvSetupHardware();
-
-    xTaskCreate(
-            InitElevator,
-            "LED1",
-            configMINIMAL_STACK_SIZE,
-            (void *) NULL,
-            5,
-            NULL);
-
-    
-    /* Start the scheduler so the tasks start executing.  This function should not return. */
-    vTaskStartScheduler();
-}
-
-
-
-
-/*-----------------------------------------------------------*/
+/**
+ * Functions
+ */
 static void prvSetupHardware(void)
 {
     /* Setup the CPU clocks, and configure the interrupt controller. */
@@ -62,8 +41,29 @@ static void prvSetupHardware(void)
     mOSCSetPBDIV(OSC_PB_DIV_2);
     INTEnableSystemMultiVectoredInt();
 
-    // Other needed HARDWARE setup below
-    //
+    // If initialize returns error, something is fatally wrong; do nothing
+    if(initializeLedDriver() || initializeSwitchDriver()) {
+        for(;;);
+    }
+    
+    initUART(UART1, UART_BAUD_RATE);
+    
+    // TODO: Anything else needs to be initialized?
+}
+
+int main(void)
+{
+    // Initialize all hardware and drivers
+    prvSetupHardware();
+
+    // Create all tasks
+    // TODO: Charles to implement
+    //create_controllers(); 
+    // TODO: BillyRayJoeBob to implement
+    //create_elevator();
+    
+    // Blast off!
+    vTaskStartScheduler();
 }
 
 void vApplicationMallocFailedHook( void )
@@ -81,7 +81,6 @@ void vApplicationMallocFailedHook( void )
 	taskDISABLE_INTERRUPTS();
 	for( ;; );
 }
-/*-----------------------------------------------------------*/
 
 void vApplicationIdleHook( void )
 {
@@ -95,7 +94,6 @@ void vApplicationIdleHook( void )
 	function, because it is the responsibility of the idle task to clean up
 	memory allocated by the kernel to any task that has since been deleted. */
 }
-/*-----------------------------------------------------------*/
 
 void vApplicationStackOverflowHook( TaskHandle_t pxTask, char *pcTaskName )
 {
@@ -109,7 +107,6 @@ void vApplicationStackOverflowHook( TaskHandle_t pxTask, char *pcTaskName )
 	taskDISABLE_INTERRUPTS();
 	for( ;; );
 }
-/*-----------------------------------------------------------*/
 
 void vApplicationTickHook( void )
 {
@@ -119,7 +116,6 @@ void vApplicationTickHook( void )
 	code must not attempt to block, and only the interrupt safe FreeRTOS API
 	functions can be used (those that end in FromISR()). */
 }
-/*-----------------------------------------------------------*/
 
 void _general_exception_handler( unsigned long ulCause, unsigned long ulStatus )
 {
@@ -127,7 +123,6 @@ void _general_exception_handler( unsigned long ulCause, unsigned long ulStatus )
 	should be handled here. */
 	for( ;; );
 }
-/*-----------------------------------------------------------*/
 
 void vAssertCalled( const char * pcFile, unsigned long ulLine )
 {

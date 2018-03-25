@@ -17,6 +17,9 @@
       </logicalFolder>
       <itemPath>Lab.X/include/elevator.h</itemPath>
       <itemPath>Lab.X/include/controllers.h</itemPath>
+      <itemPath>Lab.X/include/leddrv.h</itemPath>
+      <itemPath>Lab.X/include/swdrv.h</itemPath>
+      <itemPath>Lab.X/include/uartdrv.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -37,6 +40,9 @@
       <itemPath>Lab.X/src/main.c</itemPath>
       <itemPath>Lab.X/src/elevator.c</itemPath>
       <itemPath>Lab.X/src/controllers.c</itemPath>
+      <itemPath>Lab.X/src/leddrv.c</itemPath>
+      <itemPath>Lab.X/src/swdrv.c</itemPath>
+      <itemPath>Lab.X/src/uartdrv.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -59,7 +65,7 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>SKDEPIC32PlatformTool</platformTool>
         <languageToolchain>XC32</languageToolchain>
-        <languageToolchainVersion>1.43</languageToolchainVersion>
+        <languageToolchainVersion>1.44</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <compileType>

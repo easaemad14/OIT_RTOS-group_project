@@ -1,33 +1,37 @@
-#ifndef LEDDRV_H
-#define LEDDRV_H
-
+#pragma once
+#ifndef _SUPPRESS_PLIB_WARNING
 #define _SUPPRESS_PLIB_WARNING 1
+#endif
+#ifndef _DISABLE_OPENADC10_CONFIGPORT_WARNING
+#define _DISABLE_OPENADC10_CONFIGPORT_WARNING
+#endif
 
-#include <stdint.h>
+/*******************************************************************************
+ * File:        leddrv.h
+ * Author:      Easa El Sirgany
+ *              easa.elsirgany@oit.edu
+ * 
+ * Description: This is the header file for leddrv.c, containing all of the 
+ *              needed goodies.
+ ******************************************************************************/
+#include <xc.h> // PIC32 support
 #include <plib.h>
-#include <xc.h>
+#include <stdint.h>
+#include "FreeRTOS.h" // For portTICK_RATE_MS
+
+// Default LED blink rate
+#define DEFAULT_LED_DELAY_MSECS 500 / portTICK_RATE_MS
+
+// enums in C are garbage (there is no type safety) and this is equivalent
+#define LED1 0
+#define LED2 1
+#define LED3 2
 
 
+/**
+ * Function definitions
+ */
 uint8_t initializeLedDriver(void);
-//1. This function will setup the ports for the LEDs and set them to the OFF state.
-//Returns a 0 for success, any other value for failure.
-
-uint8_t readLED(const uint8_t ledNum);
-//1. This function will return the current state of the given LED Number. 0 for off, 1 for
-//on, any other number is an error condition
-//ledNum is defined as:
-// 0 = LED1 (RD0)
-// 1 = LED2 (RD1)
-// 2 = LED3 (RD2)
-
-uint8_t setLED(const uint8_t ledNum, const uint8_t value);
-//1. Sets ledNum to a state of OFF or ON depending on value. If value is 0 turn OFF
-//LED, any other value will turn ON LED. Returns a 0 for success or any other
-//number for failure
-        
-uint8_t toggleLED(const uint8_t ledNum);
-//1. This function will toggle the current state of the LED. If the LED is OFF it will turn
-//it ON, if LED is ON it will turn it OFF. Returns 0 for success, any other value for
-//error.
-
-#endif // !LEDDRV_H
+uint8_t readLed(uint8_t ledNum);
+uint8_t setLED(uint8_t ledNum, uint8_t value);
+uint8_t toggleLED(uint8_t ledNum);

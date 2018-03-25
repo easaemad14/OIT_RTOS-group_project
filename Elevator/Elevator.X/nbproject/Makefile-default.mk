@@ -57,17 +57,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=FreeRTOS/Source/croutine.c FreeRTOS/Source/portable/MemMang/heap_2.c FreeRTOS/Source/list.c FreeRTOS/Source/portable/MPLAB/PIC32MX/port.c FreeRTOS/Source/portable/MPLAB/PIC32MX/port_asm.S FreeRTOS/Source/queue.c FreeRTOS/Source/tasks.c Lab.X/src/main.c Lab.X/src/elevator.c Lab.X/src/controllers.c
+SOURCEFILES_QUOTED_IF_SPACED=FreeRTOS/Source/croutine.c FreeRTOS/Source/portable/MemMang/heap_2.c FreeRTOS/Source/list.c FreeRTOS/Source/portable/MPLAB/PIC32MX/port.c FreeRTOS/Source/portable/MPLAB/PIC32MX/port_asm.S FreeRTOS/Source/queue.c FreeRTOS/Source/tasks.c Lab.X/src/main.c Lab.X/src/elevator.c Lab.X/src/controllers.c Lab.X/src/leddrv.c Lab.X/src/swdrv.c Lab.X/src/uartdrv.c
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/FreeRTOS/Source/croutine.o ${OBJECTDIR}/FreeRTOS/Source/portable/MemMang/heap_2.o ${OBJECTDIR}/FreeRTOS/Source/list.o ${OBJECTDIR}/FreeRTOS/Source/portable/MPLAB/PIC32MX/port.o ${OBJECTDIR}/FreeRTOS/Source/portable/MPLAB/PIC32MX/port_asm.o ${OBJECTDIR}/FreeRTOS/Source/queue.o ${OBJECTDIR}/FreeRTOS/Source/tasks.o ${OBJECTDIR}/Lab.X/src/main.o ${OBJECTDIR}/Lab.X/src/elevator.o ${OBJECTDIR}/Lab.X/src/controllers.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/FreeRTOS/Source/croutine.o.d ${OBJECTDIR}/FreeRTOS/Source/portable/MemMang/heap_2.o.d ${OBJECTDIR}/FreeRTOS/Source/list.o.d ${OBJECTDIR}/FreeRTOS/Source/portable/MPLAB/PIC32MX/port.o.d ${OBJECTDIR}/FreeRTOS/Source/portable/MPLAB/PIC32MX/port_asm.o.d ${OBJECTDIR}/FreeRTOS/Source/queue.o.d ${OBJECTDIR}/FreeRTOS/Source/tasks.o.d ${OBJECTDIR}/Lab.X/src/main.o.d ${OBJECTDIR}/Lab.X/src/elevator.o.d ${OBJECTDIR}/Lab.X/src/controllers.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/FreeRTOS/Source/croutine.o ${OBJECTDIR}/FreeRTOS/Source/portable/MemMang/heap_2.o ${OBJECTDIR}/FreeRTOS/Source/list.o ${OBJECTDIR}/FreeRTOS/Source/portable/MPLAB/PIC32MX/port.o ${OBJECTDIR}/FreeRTOS/Source/portable/MPLAB/PIC32MX/port_asm.o ${OBJECTDIR}/FreeRTOS/Source/queue.o ${OBJECTDIR}/FreeRTOS/Source/tasks.o ${OBJECTDIR}/Lab.X/src/main.o ${OBJECTDIR}/Lab.X/src/elevator.o ${OBJECTDIR}/Lab.X/src/controllers.o ${OBJECTDIR}/Lab.X/src/leddrv.o ${OBJECTDIR}/Lab.X/src/swdrv.o ${OBJECTDIR}/Lab.X/src/uartdrv.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/FreeRTOS/Source/croutine.o.d ${OBJECTDIR}/FreeRTOS/Source/portable/MemMang/heap_2.o.d ${OBJECTDIR}/FreeRTOS/Source/list.o.d ${OBJECTDIR}/FreeRTOS/Source/portable/MPLAB/PIC32MX/port.o.d ${OBJECTDIR}/FreeRTOS/Source/portable/MPLAB/PIC32MX/port_asm.o.d ${OBJECTDIR}/FreeRTOS/Source/queue.o.d ${OBJECTDIR}/FreeRTOS/Source/tasks.o.d ${OBJECTDIR}/Lab.X/src/main.o.d ${OBJECTDIR}/Lab.X/src/elevator.o.d ${OBJECTDIR}/Lab.X/src/controllers.o.d ${OBJECTDIR}/Lab.X/src/leddrv.o.d ${OBJECTDIR}/Lab.X/src/swdrv.o.d ${OBJECTDIR}/Lab.X/src/uartdrv.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/FreeRTOS/Source/croutine.o ${OBJECTDIR}/FreeRTOS/Source/portable/MemMang/heap_2.o ${OBJECTDIR}/FreeRTOS/Source/list.o ${OBJECTDIR}/FreeRTOS/Source/portable/MPLAB/PIC32MX/port.o ${OBJECTDIR}/FreeRTOS/Source/portable/MPLAB/PIC32MX/port_asm.o ${OBJECTDIR}/FreeRTOS/Source/queue.o ${OBJECTDIR}/FreeRTOS/Source/tasks.o ${OBJECTDIR}/Lab.X/src/main.o ${OBJECTDIR}/Lab.X/src/elevator.o ${OBJECTDIR}/Lab.X/src/controllers.o
+OBJECTFILES=${OBJECTDIR}/FreeRTOS/Source/croutine.o ${OBJECTDIR}/FreeRTOS/Source/portable/MemMang/heap_2.o ${OBJECTDIR}/FreeRTOS/Source/list.o ${OBJECTDIR}/FreeRTOS/Source/portable/MPLAB/PIC32MX/port.o ${OBJECTDIR}/FreeRTOS/Source/portable/MPLAB/PIC32MX/port_asm.o ${OBJECTDIR}/FreeRTOS/Source/queue.o ${OBJECTDIR}/FreeRTOS/Source/tasks.o ${OBJECTDIR}/Lab.X/src/main.o ${OBJECTDIR}/Lab.X/src/elevator.o ${OBJECTDIR}/Lab.X/src/controllers.o ${OBJECTDIR}/Lab.X/src/leddrv.o ${OBJECTDIR}/Lab.X/src/swdrv.o ${OBJECTDIR}/Lab.X/src/uartdrv.o
 
 # Source Files
-SOURCEFILES=FreeRTOS/Source/croutine.c FreeRTOS/Source/portable/MemMang/heap_2.c FreeRTOS/Source/list.c FreeRTOS/Source/portable/MPLAB/PIC32MX/port.c FreeRTOS/Source/portable/MPLAB/PIC32MX/port_asm.S FreeRTOS/Source/queue.c FreeRTOS/Source/tasks.c Lab.X/src/main.c Lab.X/src/elevator.c Lab.X/src/controllers.c
+SOURCEFILES=FreeRTOS/Source/croutine.c FreeRTOS/Source/portable/MemMang/heap_2.c FreeRTOS/Source/list.c FreeRTOS/Source/portable/MPLAB/PIC32MX/port.c FreeRTOS/Source/portable/MPLAB/PIC32MX/port_asm.S FreeRTOS/Source/queue.c FreeRTOS/Source/tasks.c Lab.X/src/main.c Lab.X/src/elevator.c Lab.X/src/controllers.c Lab.X/src/leddrv.c Lab.X/src/swdrv.c Lab.X/src/uartdrv.c
 
 
 CFLAGS=
@@ -174,6 +174,24 @@ ${OBJECTDIR}/Lab.X/src/controllers.o: Lab.X/src/controllers.c  nbproject/Makefil
 	@${RM} ${OBJECTDIR}/Lab.X/src/controllers.o 
 	@${FIXDEPS} "${OBJECTDIR}/Lab.X/src/controllers.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -I"Lab.X/include" -I"FreeRTOS/Source/include" -I"FreeRTOS/Source/portable/MPLAB/PIC32MX" -MMD -MF "${OBJECTDIR}/Lab.X/src/controllers.o.d" -o ${OBJECTDIR}/Lab.X/src/controllers.o Lab.X/src/controllers.c    -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
 	
+${OBJECTDIR}/Lab.X/src/leddrv.o: Lab.X/src/leddrv.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}/Lab.X/src" 
+	@${RM} ${OBJECTDIR}/Lab.X/src/leddrv.o.d 
+	@${RM} ${OBJECTDIR}/Lab.X/src/leddrv.o 
+	@${FIXDEPS} "${OBJECTDIR}/Lab.X/src/leddrv.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -I"Lab.X/include" -I"FreeRTOS/Source/include" -I"FreeRTOS/Source/portable/MPLAB/PIC32MX" -MMD -MF "${OBJECTDIR}/Lab.X/src/leddrv.o.d" -o ${OBJECTDIR}/Lab.X/src/leddrv.o Lab.X/src/leddrv.c    -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
+	
+${OBJECTDIR}/Lab.X/src/swdrv.o: Lab.X/src/swdrv.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}/Lab.X/src" 
+	@${RM} ${OBJECTDIR}/Lab.X/src/swdrv.o.d 
+	@${RM} ${OBJECTDIR}/Lab.X/src/swdrv.o 
+	@${FIXDEPS} "${OBJECTDIR}/Lab.X/src/swdrv.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -I"Lab.X/include" -I"FreeRTOS/Source/include" -I"FreeRTOS/Source/portable/MPLAB/PIC32MX" -MMD -MF "${OBJECTDIR}/Lab.X/src/swdrv.o.d" -o ${OBJECTDIR}/Lab.X/src/swdrv.o Lab.X/src/swdrv.c    -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
+	
+${OBJECTDIR}/Lab.X/src/uartdrv.o: Lab.X/src/uartdrv.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}/Lab.X/src" 
+	@${RM} ${OBJECTDIR}/Lab.X/src/uartdrv.o.d 
+	@${RM} ${OBJECTDIR}/Lab.X/src/uartdrv.o 
+	@${FIXDEPS} "${OBJECTDIR}/Lab.X/src/uartdrv.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_PIC32MXSK=1  -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -I"Lab.X/include" -I"FreeRTOS/Source/include" -I"FreeRTOS/Source/portable/MPLAB/PIC32MX" -MMD -MF "${OBJECTDIR}/Lab.X/src/uartdrv.o.d" -o ${OBJECTDIR}/Lab.X/src/uartdrv.o Lab.X/src/uartdrv.c    -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
+	
 else
 ${OBJECTDIR}/FreeRTOS/Source/croutine.o: FreeRTOS/Source/croutine.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}/FreeRTOS/Source" 
@@ -228,6 +246,24 @@ ${OBJECTDIR}/Lab.X/src/controllers.o: Lab.X/src/controllers.c  nbproject/Makefil
 	@${RM} ${OBJECTDIR}/Lab.X/src/controllers.o.d 
 	@${RM} ${OBJECTDIR}/Lab.X/src/controllers.o 
 	@${FIXDEPS} "${OBJECTDIR}/Lab.X/src/controllers.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -I"Lab.X/include" -I"FreeRTOS/Source/include" -I"FreeRTOS/Source/portable/MPLAB/PIC32MX" -MMD -MF "${OBJECTDIR}/Lab.X/src/controllers.o.d" -o ${OBJECTDIR}/Lab.X/src/controllers.o Lab.X/src/controllers.c    -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
+	
+${OBJECTDIR}/Lab.X/src/leddrv.o: Lab.X/src/leddrv.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}/Lab.X/src" 
+	@${RM} ${OBJECTDIR}/Lab.X/src/leddrv.o.d 
+	@${RM} ${OBJECTDIR}/Lab.X/src/leddrv.o 
+	@${FIXDEPS} "${OBJECTDIR}/Lab.X/src/leddrv.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -I"Lab.X/include" -I"FreeRTOS/Source/include" -I"FreeRTOS/Source/portable/MPLAB/PIC32MX" -MMD -MF "${OBJECTDIR}/Lab.X/src/leddrv.o.d" -o ${OBJECTDIR}/Lab.X/src/leddrv.o Lab.X/src/leddrv.c    -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
+	
+${OBJECTDIR}/Lab.X/src/swdrv.o: Lab.X/src/swdrv.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}/Lab.X/src" 
+	@${RM} ${OBJECTDIR}/Lab.X/src/swdrv.o.d 
+	@${RM} ${OBJECTDIR}/Lab.X/src/swdrv.o 
+	@${FIXDEPS} "${OBJECTDIR}/Lab.X/src/swdrv.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -I"Lab.X/include" -I"FreeRTOS/Source/include" -I"FreeRTOS/Source/portable/MPLAB/PIC32MX" -MMD -MF "${OBJECTDIR}/Lab.X/src/swdrv.o.d" -o ${OBJECTDIR}/Lab.X/src/swdrv.o Lab.X/src/swdrv.c    -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
+	
+${OBJECTDIR}/Lab.X/src/uartdrv.o: Lab.X/src/uartdrv.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}/Lab.X/src" 
+	@${RM} ${OBJECTDIR}/Lab.X/src/uartdrv.o.d 
+	@${RM} ${OBJECTDIR}/Lab.X/src/uartdrv.o 
+	@${FIXDEPS} "${OBJECTDIR}/Lab.X/src/uartdrv.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -I"Lab.X/include" -I"FreeRTOS/Source/include" -I"FreeRTOS/Source/portable/MPLAB/PIC32MX" -MMD -MF "${OBJECTDIR}/Lab.X/src/uartdrv.o.d" -o ${OBJECTDIR}/Lab.X/src/uartdrv.o Lab.X/src/uartdrv.c    -DXPRJ_default=$(CND_CONF)  -legacy-libc  $(COMPARISON_BUILD) 
 	
 endif
 
