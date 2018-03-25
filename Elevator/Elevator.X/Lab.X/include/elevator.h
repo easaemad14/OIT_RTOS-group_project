@@ -23,7 +23,7 @@ void InitElevator(void * some_parameter);
 
 // Returns the height in feet of the elevator
 //
-uint16_t CurrentHeight(void);
+int16_t CurrentHeight(void);
 
 //returns the current speed
 //
