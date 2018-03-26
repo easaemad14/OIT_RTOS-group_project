@@ -27,11 +27,7 @@ MP_CPPC="C:\Program Files (x86)\Microchip\xc32\v1.44\bin\xc32-g++.exe"
 MP_AS="C:\Program Files (x86)\Microchip\xc32\v1.44\bin\xc32-as.exe"
 MP_LD="C:\Program Files (x86)\Microchip\xc32\v1.44\bin\xc32-ld.exe"
 MP_AR="C:\Program Files (x86)\Microchip\xc32\v1.44\bin\xc32-ar.exe"
-<<<<<<< HEAD
-DEP_GEN=${MP_JAVA_PATH}java -jar "C:/Program Files (x86)/Microchip/MPLABX/v4.01/mplab_ide/platform/../mplab_ide/modules/../../bin/extractobjectdependencies.jar"
-=======
 DEP_GEN=${MP_JAVA_PATH}java -jar "C:/Program Files (x86)/Microchip/MPLABX/v4.05/mplab_ide/platform/../mplab_ide/modules/../../bin/extractobjectdependencies.jar"
->>>>>>> 85b0e261f55e0ed1c12249176042239d17f02bc8
 MP_CC_DIR="C:\Program Files (x86)\Microchip\xc32\v1.44\bin"
 MP_CPPC_DIR="C:\Program Files (x86)\Microchip\xc32\v1.44\bin"
 # MP_BC_DIR is not defined
