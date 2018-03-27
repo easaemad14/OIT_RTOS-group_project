@@ -75,6 +75,7 @@ bool_t up = FALSE;
 
 
 #define _5_SECONDS      (5000 / portTICK_PERIOD_MS)
+#define DOOR_SPEED      (1000 / portTICK_PERIOD_MS)
 
 //******************************************************//
 // These will be the hardware checks to the PIC32 and   //
@@ -111,7 +112,8 @@ static  int16_t    height = GROUND_FLOOR;
 //
 void SustainSpeed(void){ current_accel = 0; }
 
-void 
+
+
 
 //**********************************************************************/
 // Need to have some kinematics in here to update status as necessary   /
@@ -119,6 +121,7 @@ void
 // Update height first                                                  /
 // Then update speed                                                    /
 //
+
 
 
 
@@ -136,7 +139,7 @@ int8_t CurrentSpeed()
     return current_speed;
 }
 
-int8_t CuurentAccel(void)
+int8_t CurrentAccel(void)
 {
     return current_accel;
 }
@@ -204,16 +207,6 @@ void Close( uint8_t * doors  )
     PORTDCLR = --(*doors);
 }
 
-// Button Scanner will check the queue(s) for saved button presses
-// and take appropriate action depending on the button(s) in the queue(s)
-//
-void ButtonScanner(void * Params)
-{
-    while(1)
-    {
-        ;
-    }
-}
 
 //*********************************************************************//
 // Door task will open the door over three seconds hold for 5 seconds
@@ -230,17 +223,42 @@ void DoorTask(void * usused)
         //
         vTaskSuspend(NULL);
         
+        // Open doors over 3 seconds
+        //
         while(doors < FULLY_OPEN )
-        {
+        {            
             Open(&doors);
+            vTaskDelay(DOOR_SPEED);
         }
         
-        vTaskDelay(_5_SECONDS);
+        //Hold door open for 5 seconds
+        //
+        vTaskDelay(_5_SECONDS);        
         
-        
-        Close(&doors);
-        
-        vTaskResume(ButtonScanner);
+        while(doors > CLOSED )
+        {
+            /*if( m != PRESSED )*/
+                Close(&doors);
+            /*else // someone's hand is stuck, open the door again
+                while(doors < FULLY_OPEN )
+                {            
+                    Open(&doors);                    
+                }              
+            */                
+            vTaskDelay(DOOR_SPEED);
+        }
+    }
+}
+
+
+// Button Scanner will check the queue(s) for saved button presses
+// and take appropriate action depending on the button(s) in the queue(s)
+//
+void ButtonScanner(void * Params)
+{
+    while(1)
+    {
+        ;
     }
 }
 
