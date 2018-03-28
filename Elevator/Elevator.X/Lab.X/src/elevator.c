@@ -81,7 +81,8 @@ bool_t up = FALSE;
 #define PENT_HOUSE_2    52
 #define PENT_HOUSE_1    51
 #define GROUND_FLOOR    0
-#define CURRENT_FLOOR   (current_height/10)
+#define CURRENT_FLOOR   (current_height/80)
+#define UPDATE_RATE     (500 / portTICK_PERIOD_MS)
 
 //******************************************************//
 // some definitions for the door task                   //
@@ -212,6 +213,7 @@ void vUpwardTask(void * params)
         {
             BRAKE;
         }
+        vTaskDelay(UPDATE_RATE);
     }
 }
 
@@ -240,6 +242,7 @@ void vDownwardTask(void * params)
         {
             BRAKE;
         }
+        vTaskDelay(UPDATE_RATE);        
      }
 }
 
