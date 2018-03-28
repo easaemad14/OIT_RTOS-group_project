@@ -20,18 +20,16 @@
 //
 void InitElevator(void * some_parameter);
 
-
-
 // Returns the height in feet of the elevator in feet
 //
-int16_t CurrentHeight(void);
+int16_t getCurrentHeight( void );
 
 //returns the current speed in ft/s
 //
-int8_t CurrentSpeed();
+int8_t getCurrentSpeed( void );
 
 // Returns the current acceleration ft/s^2
 //
-int8_t CurrentAccel(void);
+int8_t getCurrentAccel( void );
 
 #endif //MY_TASKS_H

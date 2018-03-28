@@ -2,7 +2,7 @@
 *
 * Lab/Assignment: Term Project, FreRTOS elevator
 * 
-* Overview:
+* Overview: 
 *
 * Input:
 *
@@ -40,12 +40,25 @@ typedef uint8_t bool_t;
 
 #ifdef DEBUG_MODE
 
-#define ABS_MAX_ACCEL 9;    // ft/(s^2)
+#define ABS_MAX_ACCEL 30;    // ft/(s^2)
 
-uint8_t max_speed = 20;     // ft/second
-uint8_t max_accel = 2;      // ft/(s^2)
+int16_t max_speed = 20;     // ft/second
+int16_t max_accel = 2;      // ft/(s^2)
 
 bool_t up = FALSE;
+
+//******************************************************//
+// These will be the hardware checks to the PIC32 and   //
+// EFlight Board button "Panels".                       //
+//                                                      //
+#define P2_INNER    0x40    //RD6
+#define P1_INNER    0x80    //RD7
+#define GD_INNER    0x2000  //RD13
+#define PORT_D_MASK 0x20C0  //Filtering for the 3 PORT C switches
+
+#define OPEN_DOOR   0x2     //RC1
+#define CLOSE_DOOR  0x4     //RC2
+#define PORT_C_MASK 0x6     //Filtering for the 2 PORT D switches
 
 #endif
 
@@ -68,98 +81,105 @@ bool_t up = FALSE;
 #define PENT_HOUSE_2    52
 #define PENT_HOUSE_1    51
 #define GROUND_FLOOR    0
-
-#define TOP_FLOOR       PENT_HOUSE_2
-#define BOTTOM_FLOOR    GROUND_FLOOR
-#define HALF_WAY        ( ( TOP_FLOOR - BOTTOM_FLOOR) >> 1 )
-
-
-#define _5_SECONDS      (5000 / portTICK_PERIOD_MS)
-#define DOOR_SPEED      (1000 / portTICK_PERIOD_MS)
-
-//******************************************************//
-// These will be the hardware checks to the PIC32 and   //
-// EFlight Board button "Panels".                       //
-//                                                      //
-#define P2_INNER    0x40    //RD6
-#define P1_INNER    0x80    //RD7
-#define GD_INNER    0x2000  //RD13
-#define PORT_D_MASK 0x20C0  //Filtering for the 3 PORT C switches
-
-#define OPEN_DOOR   0x2     //RC1
-#define CLOSE_DOOR  0x4     //RC2
-#define PORT_C_MASK 0x6     //Filtering for the 2 PORT D switches
-
-static int8_t current_speed = 0;
-static int8_t current_accel = 0; 
-
+#define CURRENT_FLOOR   (current_height/10)
 
 //******************************************************//
 // some definitions for the door task                   //
 //                                                      //
 #define FULLY_OPEN  3
 #define CLOSED      0
+#define _5_SECONDS      (5000 / portTICK_PERIOD_MS)
+#define DOOR_SPEED      (1000 / portTICK_PERIOD_MS)
 
 //******************************************************************//
-// This section will be for variable that elevator is responsible   //
-// for calculating                                                  //
-//                                                                  //
-static  int16_t    height = GROUND_FLOOR;
-#define CURRENT_FLOOR       (height/10)
+// This section will be initialize variable that elevator is        //
+// responsible for calculating                                      //
+//                    
+static uint16_t current_speed = 0;
+static uint16_t current_accel = 0;
+static uint16_t current_height = GROUND_FLOOR;
+static uint16_t destination_height = GROUND_FLOOR;
 
+//**********************************************************************//
+// basic function definitions, except the public ones provided be the   //
+// header, those are in the next section                                //
+//                                                                      //
 
-//Function resets acceleration to a known state
+static void SetupLift(void);
+static void BuildDoors(void);
+static void InstallButtonPanel( void );
+static void Open( uint8_t * doors );
+static void Close( uint8_t * doors );
 //
-void SustainSpeed(void){ current_accel = 0; }
-
-
-
-
-//**********************************************************************/
-// Need to have some kinematics in here to update status as necessary   /
-//                                                                      /
-// Update height first                                                  /
-// Then update speed                                                    /
+//Tasks, no actual parameters in use at the moment
 //
+void vUpwardTask(void * params );
+void vDownwardTask(void * params );
+void DoorTask(void * params );
+void ButtonScanner(void * Params );
 
+TaskHandle_t Tasks[3];
+#define MOVE_UP_TASK    (Tasks[0])
+#define MOVE_DOWN_TASK  (Tasks[1])
+#define DOOR_TASK       (Tasks[2])
 
+////////////////////////////////// FUNCTIONS ///////////////////////////////////
 
-
-//**********************************************************************/
-// Basic getter functions to allow retrieval of current stats without   /
-// exposing the actual variable to accidental reassignment              /
-//                                                                      /
-int16_t CurrentHeight(void)
+//**********************************************************************//
+// Basic getter functions to allow retrieval of current stats without   //
+// exposing the actual variable to accidental reassignment              //
+//                                                                      //
+// In order to allow 1/2 second update intervals with 1 ft/s^2          //
+// resolution without floating points had to multiply all values        //
+// internally by 8. Return functions will correct for this before       //
+// actually returning.                                                  //
+//                                                                      //
+int8_t getCurrentAccel(void)
 {
-    return height;
+    return (current_accel >> 3);
 }
 
-int8_t CurrentSpeed()
+int8_t getCurrentSpeed( void )
 {
-    return current_speed;
+    return (current_speed >> 3);
 }
 
-int8_t CurrentAccel(void)
+int16_t getCurrentHeight(void)
 {
-    return current_accel;
+    return (current_height >> 3);
 }
 
+#define SET_ACCEL   ( current_accel = (max_accel << 3) )
+#define STOP        ( current_accel = 0 )
+#define ACCELERATE  ( current_speed += current_accel )
 
-// function calculates braking distance necessary for stopping 
-// safely based on the current acceleration and max speed.
+// braking will have to counter the acceleration
 //
-static uint16_t brakingDistance( void /*will be void until otherwise needed*/)
-{
-    return (uint16_t)( (max_speed * max_speed / max_accel) >> 1);
-}
+#define BRAKE       ( current_speed -= (current_accel << 1) ) 
+#define MOVE_UP     ( current_height += (current_speed >> 1) + (current_accel >> 3))
+#define MOVE_DOWN   ( current_height -= (current_speed >> 1) + (current_accel >> 3))
 
-
-// Need to calculate the threshold to begin the actual braking
+// formula for stopping distance = v^2/(2a), since values are 
+// increased 8 fold, adjusted formula is 4(v^2)/a
 //
-static uint16_t brakingMark( uint8_t floor )
+#define STOP_DISTANCE   (((current_speed * current_speed) << 2) / max_accel )
+#define DISTANCE_DOWN   ( current_height - destination_height )
+#define DISTANCE_UP     ( destination_height - current_height )
+
+
+static void Open( uint8_t * doors )
 {
-    return ( (up == TRUE) ? ( floor - brakingDistance()) : brakingDistance() );
+    PORTDSET = (*doors);
+    ++(*doors); 
 }
+
+static void Close( uint8_t * doors  )
+{
+    PORTDCLR = --(*doors);
+}
+
+
+////////////////////////////////////// TASKS ///////////////////////////////////
 
 //**************************************************************************//
 // This will figure out the direction speed and necessary stop              //
@@ -167,93 +187,87 @@ static uint16_t brakingMark( uint8_t floor )
 // its max_speed or acceleration settings while already moving;             //
 // will wait til the last second before departing the current floor.        //
 //                                                                          //
-void MoveTask(void * params)
-{
-    
-    
+void vUpwardTask(void * params)
+{     
     while(1)
     {
+        // Start off by sleeping the task
+        // will be woken by the button panel
+        //
+        if(DISTANCE_UP == 0)
+        {
+            STOP;
+            vTaskSuspend(NULL);
+            SET_ACCEL;
+        }
         
+        MOVE_UP;
         
-        ;
+        if( current_speed < (max_speed << 3))
+        {
+            ACCELERATE;
+        }
+        
+        if ( DISTANCE_UP < STOP_DISTANCE )
+        {
+            BRAKE;
+        }
     }
 }
 
-// Setups the initial Elevator movement task
-//
-void SetupLift(void)
+void vDownwardTask(void * params)
 {
-    BaseType_t success = xTaskCreate(
-                                    MoveTask,
-                                    "Move",
-                                    configMINIMAL_STACK_SIZE,
-                                    (void*) NULL,
-                                    1,
-                                    NULL  );
-    if(success == pdFAIL)
+     while(1)
     {
-        while(1);
-    }
+        // Start off by sleeping the task
+        // will be woken by the button panel
+        //
+        if(DISTANCE_DOWN == 0)
+        {
+            STOP;
+            vTaskSuspend(NULL);
+            SET_ACCEL;
+        }
+        
+        MOVE_DOWN;
+        
+        if( current_speed < (max_speed << 3))
+        {
+            ACCELERATE;
+        }
+        
+        if ( DISTANCE_DOWN < STOP_DISTANCE )
+        {
+            BRAKE;
+        }
+     }
 }
-
-void Open( uint8_t * doors )
-{
-    PORTDSET = (*doors);
-    ++(*doors); 
-}
-
-void Close( uint8_t * doors  )
-{
-    PORTDCLR = --(*doors);
-}
-
 
 //*********************************************************************//
 // Door task will open the door over three seconds hold for 5 seconds
 // then close the door over 3 second as long as there is no interference
 // 
 //
-void DoorTask(void * usused)
+void DoorTask(void * params)
 {
-    uint8_t doors = 0;
-    
     while(1)
     {
-        //Wait for command to wake up the door task
+        //Open doors over 3 seconds
         //
-        vTaskSuspend(NULL);
         
-        // Open doors over 3 seconds
+        //Hold open for 5 seconds or until close_door command
         //
-        while(doors < FULLY_OPEN )
-        {            
-            Open(&doors);
-            vTaskDelay(DOOR_SPEED);
-        }
         
-        //Hold door open for 5 seconds
+        //Close door as long as no interference
+        //and no open_door command
         //
-        vTaskDelay(_5_SECONDS);        
-        
-        while(doors > CLOSED )
-        {
-            /*if( m != PRESSED )*/
-                Close(&doors);
-            /*else // someone's hand is stuck, open the door again
-                while(doors < FULLY_OPEN )
-                {            
-                    Open(&doors);                    
-                }              
-            */                
-            vTaskDelay(DOOR_SPEED);
-        }
     }
 }
 
-
-// Button Scanner will check the queue(s) for saved button presses
-// and take appropriate action depending on the button(s) in the queue(s)
-//
+//**************************************************************************//
+// Button Scanner will check the queue(s) for saved button presses          //
+// and take appropriate action depending on the button(s) in the queue(s)   //
+//                                                                          //
 void ButtonScanner(void * Params)
 {
     while(1)
@@ -262,10 +276,41 @@ void ButtonScanner(void * Params)
     }
 }
 
+//////////////////////////////// Setup Functions ///////////////////////////////
+
+// Setups the initial Elevator movement task
+//
+static void SetupLift(void)
+{
+    BaseType_t success = xTaskCreate(
+                                    vUpwardTask,
+                                    "MoveUp",
+                                    configMINIMAL_STACK_SIZE,
+                                    (void*) NULL,
+                                    1,
+                                    MOVE_UP_TASK  );
+    if(success == pdFAIL)
+    {
+        while(1);
+    }
+    
+    success = xTaskCreate(
+                        vDownwardTask,
+                        "MoveDown",
+                        configMINIMAL_STACK_SIZE,
+                        (void*) NULL,
+                        1,
+                        MOVE_DOWN_TASK  );
+    
+    if(success == pdFAIL)
+    {
+        while(1);
+    }
+}
 
 // Just instantiates a Door task
 //
-void BuildDoors(void)
+static void BuildDoors(void)
 {
     BaseType_t success = xTaskCreate(
                                     DoorTask,
@@ -273,17 +318,22 @@ void BuildDoors(void)
                                     configMINIMAL_STACK_SIZE,
                                     (void*) NULL,
                                     1,
-                                    NULL  );
+                                    DOOR_TASK  );
     if(success == pdFAIL)
     {
         while(1);
     }
 }
 
-
-
-void InstallButtonPanel()
+// Prepare the necessary queues and button task
+//
+static void InstallButtonPanel(void)
 {
+    // Instantiate the necessary queues first...
+    //
+    
+    // ...Then create the task to use them
+    //
     BaseType_t success = xTaskCreate(
                                     ButtonScanner,
                                     "Panel",
@@ -298,11 +348,11 @@ void InstallButtonPanel()
 }
 
 
-//**************************************************/
-// This function will run through instantiating     /
-// the necessary other functions and tasks of the   /
-// elevator                                         /
-//                                                  /
+//**************************************************//
+// This function will run through instantiating     //
+// the necessary other functions and tasks of the   //
+// elevator                                         //
+//                                                  //
 void InitElevator(void * unused)
 {
     // Init functions all go here
