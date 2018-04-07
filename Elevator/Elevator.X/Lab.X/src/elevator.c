@@ -24,8 +24,9 @@ typedef uint8_t bool_t;
 
 
 //**************************************************************************************//
-// Creating a flag to separate production code from whatever else I need just           //
-// simulate coms from other tasks and variables. comment out to make ready for release  //
+// Creating a flag to separate production code from whatever else I need just to        //
+// simulate communication from other tasks and variables. comment out to                //
+// make ready for release                                                               //
 //
 #define DEBUG_MODE
 //
@@ -40,12 +41,11 @@ typedef uint8_t bool_t;
 
 #ifdef DEBUG_MODE
 
-#define ABS_MAX_ACCEL 30;    // ft/(s^2)
+#define ABS_MAX_ACCEL 30;   // ft/(s^2)
 
 int16_t max_speed = 20;     // ft/second
 int16_t max_accel = 2;      // ft/(s^2)
 
-bool_t up = FALSE;
 
 //******************************************************//
 // These will be the hardware checks to the PIC32 and   //
@@ -60,7 +60,12 @@ bool_t up = FALSE;
 #define CLOSE_DOOR  0x4     //RC2
 #define PORT_C_MASK 0x6     //Filtering for the 2 PORT D switches
 
+
+
+
+
 #endif
+
 
 
 //******************************************************************//
@@ -73,6 +78,18 @@ bool_t up = FALSE;
 
 #endif
 
+struct{
+    uint16_t CALL_FROM_GD       : 1;
+    uint16_t CALL_FROM_P2       : 1;
+    uint16_t CALL_UP_FROM_P1    : 1;
+    uint16_t CALL_DOWN_FROM_P1  : 1;
+    uint16_t EMERGANCY_STOP     : 1;
+    uint16_t CLEAR_E_STOP       : 1;
+    uint16_t GO_TO_GD           : 1;
+    uint16_t GO_TO_P1           : 1;
+    uint16_t GO_TO_P2           : 1;
+    
+}ButtonSignal;
 
 //******************************************************************//
 // This section will have basic defines and variables as outlined   //           
@@ -105,7 +122,7 @@ static uint16_t destination_height = GROUND_FLOOR;
 // basic function definitions, except the public ones provided be the   //
 // header, those are in the next section                                //
 //                                                                      //
-
+//
 static void SetupLift(void);
 static void BuildDoors(void);
 static void InstallButtonPanel( void );
@@ -118,11 +135,14 @@ void vUpwardTask(void * params );
 void vDownwardTask(void * params );
 void DoorTask(void * params );
 void ButtonScanner(void * Params );
-
-TaskHandle_t Tasks[3];
+//
+// Task handle allocation
+//
+TaskHandle_t Tasks[4];
 #define MOVE_UP_TASK    (Tasks[0])
 #define MOVE_DOWN_TASK  (Tasks[1])
 #define DOOR_TASK       (Tasks[2])
+#define HANDLE_E_STOP   (Tasks[3])
 
 ////////////////////////////////// FUNCTIONS ///////////////////////////////////
 
@@ -154,7 +174,7 @@ int16_t getCurrentHeight(void)
 #define STOP        ( current_accel = 0 )
 #define ACCELERATE  ( current_speed += current_accel )
 
-// braking will have to counter the acceleration
+// braking will have to counter the acceleration needs to be twice as strong
 //
 #define BRAKE       ( current_speed -= (current_accel << 1) ) 
 #define MOVE_UP     ( current_height += (current_speed >> 1) + (current_accel >> 3))
@@ -281,7 +301,8 @@ void ButtonScanner(void * Params)
 
 //////////////////////////////// Setup Functions ///////////////////////////////
 
-// Setups the initial Elevator movement task
+
+// Sets up the initial Elevator movement task
 //
 static void SetupLift(void)
 {
@@ -335,6 +356,7 @@ static void InstallButtonPanel(void)
     // Instantiate the necessary queues first...
     //
     
+    
     // ...Then create the task to use them
     //
     BaseType_t success = xTaskCreate(
@@ -366,7 +388,25 @@ void InitElevator(void * unused)
     
     InstallButtonPanel();
 
-    // Deletes itself when finished with setup.
+    // Task deletes itself when finished with setup.
     //
     vTaskDelete(NULL);
+}
+
+//
+//function to call from main()
+//
+void create_elevator(void)
+{
+    BaseType_t success = xTaskCreate(
+                                    InitElevator,
+                                    "InitElevator",
+                                    configMINIMAL_STACK_SIZE,
+                                    (void*) NULL,
+                                    1,
+                                    NULL  );
+    if(success == pdFAIL)
+    {
+        while(1);
+    }
 }

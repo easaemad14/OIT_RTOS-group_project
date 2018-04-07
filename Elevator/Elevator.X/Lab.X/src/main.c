@@ -59,8 +59,10 @@ int main(void)
     // Create all tasks
     // TODO: Charles to implement
     //create_controllers(); 
+    
+    
     // TODO: BillyRayJoeBob to implement
-    //create_elevator();
+    create_elevator();
     
     // Blast off!
     vTaskStartScheduler();
