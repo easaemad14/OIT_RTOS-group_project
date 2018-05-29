@@ -1,2 +1,7 @@
-
+*.[od]
 *.mk
+*.elf
+*.hex
+*.map
+*.xml
+*.properties
