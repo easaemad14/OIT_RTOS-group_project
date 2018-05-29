@@ -21,6 +21,7 @@
 
 #define UART_BAUD_RATE 9600
 #define UART_DELAY 2 / portTICK_RATE_MS
+#define UART_MAX_BUFFER_SIZE 128 // For any RX/TX buffers
 
 /**
  * Functions

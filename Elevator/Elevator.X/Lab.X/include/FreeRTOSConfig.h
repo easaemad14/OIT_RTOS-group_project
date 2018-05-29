@@ -93,7 +93,7 @@
 #define configISR_STACK_SIZE                    ( 400 )
 #define configTOTAL_HEAP_SIZE                   ( ( size_t ) 28000 )
 #define configMAX_TASK_NAME_LEN                 ( 8 )
-#define configUSE_TRACE_FACILITY                0
+#define configUSE_TRACE_FACILITY                1
 #define configUSE_16_BIT_TICKS                  0
 #define configIDLE_SHOULD_YIELD                 1
 #define configUSE_MUTEXES                       1
@@ -104,6 +104,10 @@
 #define configUSE_APPLICATION_TASK_TAG          0
 #define configUSE_COUNTING_SEMAPHORES           1
 #define configGENERATE_RUN_TIME_STATS           0
+
+/* Needed for CLI */
+#define configUSE_STATS_FORMATTING_FUNCTIONS    1
+#define configCOMMAND_INT_MAX_OUTPUT_SIZE       300
 
 /* Co-routine definitions. */
 #define configUSE_CO_ROUTINES                   0
