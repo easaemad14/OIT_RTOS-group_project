@@ -1,22 +1,23 @@
-/*************************************************************
-*
-* Lab/Assignment: Term Project, FreRTOS elevator
-* 
-* Overview: 
-*
-* Input:
-*
-* Output:
-*	
-*
-************************************************************/
-
+/*******************************************************************************
+ * File:        elevator.c
+ * Author:      Steven Morales
+ *              steven.morales@oit.edu
+ * 
+ * Description: This file contains all of the elevator specific functionality
+ ******************************************************************************/
 #include "elevator.h"
 
+
+/**
+ * Preprocessor Macros
+ */
 #define CLOSE_DOORS 0
 #define OPEN_DOORS 1
 
 
+/**
+ * Local Variables
+ */
 QueueHandle_t doors_queue;
 
 
@@ -206,6 +207,9 @@ static void Close( uint8_t * doors  )
 }
 
 
+/**
+ * Functions and Tasks
+ */
 ////////////////////////////////////// TASKS ///////////////////////////////////
 
 //**************************************************************************//
@@ -408,27 +412,47 @@ void create_elevator(void)
             NULL, 1, NULL) == pdFAIL) {
         for(;;);
     }
+    
     if(xTaskCreate(elevatorTask, "elevator", configMINIMAL_STACK_SIZE,
             NULL, 1, NULL) == pdFAIL) {
         for(;;);
     }
 }
 
-// The elevator task that (should) runs for the life of the program
+// The elevator task is in charge of receiving all messages and applying logic
 void elevatorTask(void *params)
 {
     int op;
+    volatile int sw_open, sw_close;
     
     for(;;) {
         //op = OPEN_DOORS;
         //if(doors_queue != NULL) {
         //    xQueueSendToBack(doors_queue, (void *)&op, (TickType_t)5);
         //}
-        //vTaskDelay(2* _5_SECONDS);
+        //vTaskDelay(DOOR_SPEED);
+        
+#if 0
+        sw_open = readSwitch(SWITCH_OPEN);
+        sw_close = readSwitch(SWITCH_CLOSE);
+        
+        if(sw_open == 1) {
+            LOCKOUT(SWITCH_OPEN);
+            toggleLED(LED_UP);
+        }
+        
+        if(sw_close == 1) {
+            LOCKOUT(SWITCH_CLOSE);
+            toggleLED(LED_DN);
+        }
+        
+        vTaskDelay(SWITCH_DEBOUNCE_DELAY_MSECS);
+#endif
     }
 }
 
-// Doors default to closed; only open if we receive the open command
+// The door task controls door functionality
+// Doors only open to let "passengers" in; closed is default state
 void doorTask(void *params)
 {
     int doorBuf[2]; // Need to be big enough for latency

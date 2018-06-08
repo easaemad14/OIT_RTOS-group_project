@@ -33,6 +33,10 @@ uint8_t readSwitch(uint8_t swNum)
             return !mPORTDReadBits(1 << SWITCH2_BIT_POSITION);
         case SWITCH3:
             return !mPORTDReadBits(1 << SWITCH3_BIT_POSITION);
+        case SWITCH_OPEN:
+            return !mPORTCReadBits(1 << SWITCH_OPEN_POSITION);
+        case SWITCH_CLOSE:
+            return !mPORTCReadBits(1 << SWITCH_CLOSE_POSITION);
         default:
             return 2; // 2 for failure
     }

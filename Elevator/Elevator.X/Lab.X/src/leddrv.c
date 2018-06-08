@@ -17,6 +17,8 @@ uint8_t initializeLedDriver(void)
 {
     uint8_t retVal;
     
+    // Up and down LEDs need to enable pull-ups
+    ConfigCNPullups(CN6_PULLUP_ENABLE | CN7_PULLUP_ENABLE);
     // Set LEDs low
     retVal = setLED(LED1, 0);
     retVal |= setLED(LED2, 0);
@@ -26,7 +28,7 @@ uint8_t initializeLedDriver(void)
     
     // LEDs are outputs
     mPORTDSetPinsDigitalOut(BIT_0 | BIT_1 | BIT_2);
-    mPORTBSetPinsDigitalOut(BIT_8 | BIT_9);
+    mPORTBSetPinsDigitalOut(BIT_4 | BIT_5);
     
     return retVal;
 }
@@ -61,8 +63,8 @@ uint8_t setLED(uint8_t ledNum, uint8_t value)
             break;
         case LED_UP:
         case LED_DN:
-            (value == 0) ? mPORTBClearBits(1 << ledNum) :
-                mPORTBSetBits(1 << ledNum);
+            (value == 0) ? mPORTBSetBits(1 << ledNum) :
+                mPORTBClearBits(1 << ledNum);
             break;
         default:
             for(;;);
