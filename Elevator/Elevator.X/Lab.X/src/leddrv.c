@@ -15,17 +15,20 @@
 // Returns 0 for success; other for failure
 uint8_t initializeLedDriver(void)
 {
+    uint8_t retVal;
+    
     // Set LEDs low
-    int i;
-    for(i = LED1; i <= LED3; i++) {
-        if(setLED(i, 0)) {
-            return 1;
-        }
-    }
-
+    retVal = setLED(LED1, 0);
+    retVal |= setLED(LED2, 0);
+    retVal |= setLED(LED3, 0);
+    retVal |= setLED(LED_UP, 0);
+    retVal |= setLED(LED_DN, 0);
+    
     // LEDs are outputs
     mPORTDSetPinsDigitalOut(BIT_0 | BIT_1 | BIT_2);
-    return 0;
+    mPORTBSetPinsDigitalOut(BIT_8 | BIT_9);
+    
+    return retVal;
 }
 
 // Return the current state of the LED Number: 0 for off, 1 for on, 2 for fail
@@ -33,9 +36,10 @@ uint8_t initializeLedDriver(void)
 uint8_t readLed(uint8_t ledNum)
 {
     // Let's ensure that ledNum is in range first
-    if(ledNum > LED3) {
+    if(!IS_VALID_LED(ledNum)) {
         return 2; // Failure
     }
+    
     // Return only a one or a zero
     return !!mPORTDReadBits(1 << ledNum);
 }
@@ -44,12 +48,26 @@ uint8_t readLed(uint8_t ledNum)
 // Returns 0 for success, other for failure
 uint8_t setLED(uint8_t ledNum, uint8_t value)
 {
-    if(ledNum > LED3) {
+    if(!IS_VALID_LED(ledNum)) {
         return 1;
     }
     
-    (value == 0) ? mPORTDClearBits(1 << ledNum) :
+    switch(ledNum) {
+        case LED1:
+        case LED2:
+        case LED3:
+            (value == 0) ? mPORTDClearBits(1 << ledNum) :
                 mPORTDSetBits(1 << ledNum);
+            break;
+        case LED_UP:
+        case LED_DN:
+            (value == 0) ? mPORTBClearBits(1 << ledNum) :
+                mPORTBSetBits(1 << ledNum);
+            break;
+        default:
+            for(;;);
+    }
+    
     return 0;
 }
 
@@ -57,10 +75,23 @@ uint8_t setLED(uint8_t ledNum, uint8_t value)
 // Returns 0 on success, other for failure
 uint8_t toggleLED(uint8_t ledNum)
 {
-    if(ledNum > LED3) {
+    if(!IS_VALID_LED(ledNum)) {
         return 1;
     }
     
-    mPORTDToggleBits(1 << ledNum);
+    switch(ledNum) {
+        case LED1:
+        case LED2:
+        case LED3:
+            mPORTDToggleBits(1 << ledNum);
+            break;
+        case LED_UP:
+        case LED_DN:
+            mPORTBToggleBits(1 << ledNum);
+            break;
+        default:
+            for(;;);
+    }
+    
     return 0;
 }

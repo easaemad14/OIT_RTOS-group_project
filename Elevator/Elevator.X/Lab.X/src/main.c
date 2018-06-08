@@ -48,7 +48,7 @@ static void prvSetupHardware(void)
     
     initUART(UART1, UART_BAUD_RATE);
     
-    // TODO: Anything else needs to be initialized?
+    cli_init();
 }
 
 int main(void)

@@ -13,6 +13,12 @@
 
 #include "elevator.h"
 
+#define CLOSE_DOORS 0
+#define OPEN_DOORS 1
+
+
+QueueHandle_t doors_queue;
+
 
 // Defined some basic boolean-type variables since there is no bool type
 // already available in FreeRTOS
@@ -398,15 +404,59 @@ void InitElevator(void * unused)
 //
 void create_elevator(void)
 {
-    BaseType_t success = xTaskCreate(
-                                    InitElevator,
-                                    "InitElevator",
-                                    configMINIMAL_STACK_SIZE,
-                                    (void*) NULL,
-                                    1,
-                                    NULL  );
-    if(success == pdFAIL)
-    {
-        while(1);
+    if(xTaskCreate(doorTask, "doors", configMINIMAL_STACK_SIZE, 
+            NULL, 1, NULL) == pdFAIL) {
+        for(;;);
+    }
+    if(xTaskCreate(elevatorTask, "elevator", configMINIMAL_STACK_SIZE,
+            NULL, 1, NULL) == pdFAIL) {
+        for(;;);
+    }
+}
+
+// The elevator task that (should) runs for the life of the program
+void elevatorTask(void *params)
+{
+    int op;
+    
+    for(;;) {
+        //op = OPEN_DOORS;
+        //if(doors_queue != NULL) {
+        //    xQueueSendToBack(doors_queue, (void *)&op, (TickType_t)5);
+        //}
+        //vTaskDelay(2* _5_SECONDS);
+    }
+}
+
+// Doors default to closed; only open if we receive the open command
+void doorTask(void *params)
+{
+    int doorBuf[2]; // Need to be big enough for latency
+    doors_queue = xQueueCreate((UBaseType_t)2, (UBaseType_t)sizeof(int));
+    
+    // Doors default to closed
+    setLED(LED1, 1);
+    setLED(LED2, 1);
+    setLED(LED3, 1);
+    
+    for(;;) {
+        if(xQueueReceive(doors_queue, &doorBuf, (TickType_t)portMAX_DELAY)) {
+            if(doorBuf[0] || doorBuf[1]) {
+                setLED(LED3, 0);
+                vTaskDelay(DOOR_SPEED);
+                setLED(LED2, 0);
+                vTaskDelay(DOOR_SPEED);
+                setLED(LED1, 0);
+                vTaskDelay(_5_SECONDS);
+            }
+            
+            // We close the doors either way, even if we just opened
+            setLED(LED1, 1);
+            vTaskDelay(DOOR_SPEED);
+            setLED(LED2, 1);
+            vTaskDelay(DOOR_SPEED);
+            setLED(LED3, 1);
+            vTaskDelay(DOOR_SPEED);
+        }
     }
 }

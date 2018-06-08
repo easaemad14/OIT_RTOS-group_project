@@ -1,3 +1,4 @@
+#pragma once
 /*************************************************************
 * Author:		Steven Morales
 * Filename:		myTasks.h
@@ -5,14 +6,13 @@
 * Modifications:	
 *  			
 **************************************************************/
-
-#ifndef MY_TASKS_H
-#define MY_TASKS_H
-
 #include <xc.h>
 #include <stdint.h>
 #include "FreeRTOS.h"
 #include "task.h"
+#include "leddrv.h"
+#include "queue.h"
+
 
 // InitElevator will quickly setup necessary infrastructure for the Elevator
 // task then delete itself. Will call other setup functions in quick succession
@@ -32,4 +32,5 @@ int8_t getCurrentSpeed( void );
 //
 int8_t getCurrentAccel( void );
 
-#endif //MY_TASKS_H
+void elevatorTask(void *params);
+void doorTask(void *params);

@@ -26,11 +26,14 @@
 #define LED1 0
 #define LED2 1
 #define LED3 2
+#define LED_UP 9
+#define LED_DN 8
 
-#define IS_VALID_LED(N) {                   \
+#define IS_VALID_LED(N) (                   \
             (N == LED1) || (N == LED2) ||   \
-            (N == LED3) /* || ... */        \
-        }
+            (N == LED3) || (N == LED_UP) || \
+            (N == LED_DN))
+
 
 /**
  * Function definitions

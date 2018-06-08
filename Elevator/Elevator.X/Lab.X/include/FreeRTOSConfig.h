@@ -129,8 +129,8 @@ to exclude the API function. */
 #define INCLUDE_vTaskSuspend                    1
 #define INCLUDE_vTaskDelayUntil                 1
 #define INCLUDE_vTaskDelay                      1
-#define INCLUDE_uxTaskGetStackHighWaterMark	1
-#define INCLUDE_eTaskGetState			1
+#define INCLUDE_uxTaskGetStackHighWaterMark     1
+#define INCLUDE_eTaskGetState                   1
 
 /* Prevent C specific syntax being included in assembly files. */
 #ifndef __LANGUAGE_ASSEMBLY
