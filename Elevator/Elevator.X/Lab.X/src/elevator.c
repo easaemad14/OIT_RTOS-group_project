@@ -22,23 +22,15 @@
 #define P2_FLOOR 52
 #define DOOR_SPEED (1000 / portTICK_PERIOD_MS)
 #define DOOR_OPEN_DELAY (5000 / portTICK_PERIOD_MS)
+#define UART_DELAY (500 / portTICK_PERIOD_MS)
 #define E_QUEUE_LEN 20
 
-// Elevator queue messages
-#define GD_UP 0
-#define P1_UP 1
-#define P1_DN 2
-#define P2_DN 3
-#define GOTO_GD 4
-#define GOTO_P1 5
-#define GOTO_P2 6
-#define OPEN_DOOR 7
-#define CLOSE_DOOR 8 // LOL
 
 /**
  * Local Variables
  */
 QueueHandle_t e1_queue; // Queue for our first elevator
+char status[17];
 
 // Elevator class
 struct elevator {
@@ -60,14 +52,94 @@ struct elevator {
 /**
  * Functions and Tasks
  */
+// Thread to receive all requests 
+void recvTask(void *params)
+{
+    uint8_t buf[E_QUEUE_LEN];
+    e1_queue = xQueueCreate(E_QUEUE_LEN, sizeof(uint8_t));
+    configASSERT(e1_queue != NULL);
+    
+    if(xQueueReceive(e1_queue, &buf, (TickType_t)portMAX_DELAY)) {
+        // TODO: get lock and modify elevator
+    }
+}
+
+// This function will open (or close) the elevator doors
+// Doors only open to let "passengers" in; closed is default state
+void doorControl(uint8_t open)
+{
+    portTickType start;
+    
+    // Open the doors, unless some says otherwise
+    while(E1.door_i > 0) {
+        if(E1.door_close) {
+            break;
+        }
+        setLED(--E1.door_i, 0);
+        
+        // Delay
+        start = xTaskGetTickCount();
+        while((xTaskGetTickCount() - start) < DOOR_SPEED);
+    }
+    start = xTaskGetTickCount();
+    while((xTaskGetTickCount() - start) < DOOR_OPEN_DELAY);
+
+    // Ensure we don't close the door on someone
+    while(E1.door_i <= LED3) { // See the correlation here?
+        if (E1.door_int) { // Open the doors
+            return;
+        }
+        setLED(E1.door_i++, 1);
+        start = xTaskGetTickCount();
+        while((xTaskGetTickCount() - start) < DOOR_SPEED);
+    }
+}
+
+// Lift will move the elevator, send UART updates, and simulate motors
+void liftTask(void *params)
+{
+    for(;;) {
+        strncpy(status, "Floor GD Stopped\0", sizeof(status));
+        vUartPutStr(UART1, status, strlen(status));
+        
+#if 0
+        vTaskDelay(UART_DELAY);
+#else
+        vTaskDelete(NULL);
+#endif
+    }
+}
+
+// The elevator task is in charge of receiving all messages and applying logic
+void elevatorTask(void *params)
+{
+    volatile int sw_gd, sw_p1, sw_p2, sw_open, sw_close;
+    
+    for(;;) {
+        // TODO: Check switches and do logical stuff
+        // All E1 modifications need to be within lock
+#if 0
+        sw_open = readSwitch(SWITCH_OPEN);
+        sw_close = readSwitch(SWITCH_CLOSE);
+        
+        if(sw_open == 1) {
+            LOCKOUT(SWITCH_OPEN);
+            toggleLED(LED_UP);
+        }
+        
+        if(sw_close == 1) {
+            LOCKOUT(SWITCH_CLOSE);
+            toggleLED(LED_DN);
+        }
+        
+        vTaskDelay(SWITCH_DEBOUNCE_DELAY_MSECS);
+#endif
+    }
+}
+
 // Initialize elevator and all subtasks
 void create_elevator(void)
 {
-    if(xTaskCreate(doorTask, "doors", configMINIMAL_STACK_SIZE, 
-            NULL, 1, NULL) == pdFAIL) {
-        for(;;);
-    }
-    
     if(xTaskCreate(recvTask, "receiver", configMINIMAL_STACK_SIZE,
             NULL, 1, NULL) == pdFAIL) {
         for(;;);
@@ -96,66 +168,4 @@ void create_elevator(void)
     setLED(LED1, 1);
     setLED(LED2, 1);
     setLED(LED3, 1);
-}
-
-// The elevator task is in charge of receiving all messages and applying logic
-void elevatorTask(void *params)
-{
-    volatile int sw_gd, sw_p1, sw_p2, sw_open, sw_close;
-    
-    for(;;) {
-        // TODO: Check switches and do logical stuff
-#if 0
-        sw_open = readSwitch(SWITCH_OPEN);
-        sw_close = readSwitch(SWITCH_CLOSE);
-        
-        if(sw_open == 1) {
-            LOCKOUT(SWITCH_OPEN);
-            toggleLED(LED_UP);
-        }
-        
-        if(sw_close == 1) {
-            LOCKOUT(SWITCH_CLOSE);
-            toggleLED(LED_DN);
-        }
-        
-        vTaskDelay(SWITCH_DEBOUNCE_DELAY_MSECS);
-#endif
-    }
-}
-
-// The door task controls door functionality
-// Doors only open to let "passengers" in; closed is default state
-void doorTask(void *params)
-{
-    // Open the doors, unless some says otherwise
-    while(E1.door_i > 0) {
-        if(E1.door_close) {
-            break;
-        }
-        setLED(--E1.door_i, 0);
-        vTaskDelay(DOOR_SPEED);
-    }
-    vTaskDelay(DOOR_OPEN_DELAY);
-
-    // Ensure we don't close the door on someone
-    while(E1.door_i <= LED3) { // See the correlation here?
-        if (E1.door_int) { // Open the doors
-            return;
-        }
-        setLED(E1.door_i++, 1);
-        vTaskDelay(DOOR_SPEED);
-    }
-}
-
-// Thread to receive all requests 
-void recvTask(void *params)
-{
-    uint8_t buf[E_QUEUE_LEN];
-    e1_queue = xQueueCreate(E_QUEUE_LEN, sizeof(uint8_t));
-    configASSERT(e1_queue != NULL);
-    
-    if(xQueueReceive(e1_queue, &buf, (TickType_t)portMAX_DELAY)) {
-        // TODO: get lock and modify elevator
-    }
 }
