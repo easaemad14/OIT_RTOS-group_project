@@ -35,3 +35,4 @@ int8_t getCurrentAccel( void );
 
 void elevatorTask(void *params);
 void doorTask(void *params);
+void recvTask(void *params);
