@@ -1,6 +1,6 @@
 #pragma once
 /*******************************************************************************
- * File:        elevator.c
+ * File:        elevator.h
  * Author:      Steven Morales
  *              steven.morales@oit.edu
  * 

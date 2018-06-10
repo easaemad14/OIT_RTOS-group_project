@@ -14,7 +14,7 @@
 #define DIR_UP 0
 #define DIR_DN 1
 #define DIR_NO 2
-#define ABS_MAX_ACCEL 30;   // ft/(s^2)
+#define ABS_MAX_ACCEL 30 // ft/s^2
 #define MAX_SPEED 20
 #define MAX_ACCEL 2
 #define GD_FLOOR 0
