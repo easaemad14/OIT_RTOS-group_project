@@ -24,11 +24,13 @@
 #define OPEN_DOOR 4 // 'm'
 
 // Completed elevator tasks (from elevator)
-#define CLEAR_GD 250
-#define CLEAR_P1_UP 251
-#define CLEAR_P1_DN 252
-#define CLEAR_P2 253
-#define CLEAR_DOOR 254
+#define CLEAR_GD 100
+#define CLEAR_P1_UP 101
+#define CLEAR_P1_DN 102
+#define CLEAR_P2 103
+#define CLEAR_DOOR_INT 104
+#define CLEAR_DOOR_CLOSE 105
+
 #define CMD_NULL 255
 
 

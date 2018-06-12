@@ -20,10 +20,11 @@
 #define GD_FLOOR 0
 #define P1_FLOOR 51
 #define P2_FLOOR 52
+#define MAX_DOOR_I 3
 #define DOOR_SPEED (1000 / portTICK_PERIOD_MS)
 #define DOOR_OPEN_DELAY (5000 / portTICK_PERIOD_MS)
 #define UART_DELAY (500 / portTICK_PERIOD_MS)
-#define DEFAULT_TASK_DELAY (500 / portTICK_PERIOD_MS)
+#define DEFAULT_TASK_DELAY (100 / portTICK_PERIOD_MS)
 #define E_QUEUE_LEN 5
 
 
@@ -45,7 +46,7 @@ struct elevator {
     uint8_t p1_goto; // Direction doesn't matter
     uint8_t p1_wait_dn; // Going down from P1
     uint8_t p2_wait; // Someone is waiting to go down
-    uint8_t door_i; // Keep track of door status
+    int8_t door_i; // Keep track of door status; signed
     uint8_t door_int; // Someone got in the way or door open
     uint8_t door_close; // Close the door
 } E1;
@@ -65,7 +66,7 @@ void recvTask(void *params)
     configASSERT(e1_queue != NULL);
 
     // Build our elevator defaults
-    E1.direction = DIR_UP;
+    E1.direction = DIR_NO;
     E1.rel_pos = GD_FLOOR;
     E1.abs_pos = 0;
     E1.velocity = 0;
@@ -74,7 +75,7 @@ void recvTask(void *params)
     E1.p1_wait_up = 0;
     E1.p1_wait_dn = 0;
     E1.p2_wait = 0;
-    E1.door_i = 3;
+    E1.door_i = MAX_DOOR_I;
     E1.door_int = 0;
     E1.door_close = 0;
     
@@ -118,12 +119,17 @@ void recvTask(void *params)
                     case CLEAR_P2:
                         E1.p2_wait = 0;
                         break;
-                    case CLEAR_DOOR:
+                    case CLEAR_DOOR_INT:
+                        E1.door_int = 0;
+                        break;
+                    case CLEAR_DOOR_CLOSE:
                         E1.door_close = 0;
                         break;
                     default:
                         for(;;); // WTF?
                 }
+                
+                buf[i] = CMD_NULL; // Don't repeat
             }
         }
         
@@ -144,7 +150,8 @@ void recvTask(void *params)
         
         // Set all button vars appropriately
         E1.door_int |= sw_open;
-        E1.door_close |= sw_close;
+        // Don't close door flag if already closed
+        E1.door_close |= (E1.door_i < MAX_DOOR_I) ? 0 : sw_close;
         E1.gd_wait |= sw_gd;
         E1.p1_goto |= sw_p1;
         E1.p2_wait |= sw_p2;
@@ -153,9 +160,10 @@ void recvTask(void *params)
 
 // This function will open (or close) the elevator doors
 // Doors only open to let "passengers" in; closed is default state
-void doorControl(uint8_t open)
+void openDoors()
 {
     portTickType start;
+    uint8_t status;
     
     // Open the doors, unless some says otherwise
     while(E1.door_i > 0) {
@@ -168,11 +176,17 @@ void doorControl(uint8_t open)
         start = xTaskGetTickCount();
         while((xTaskGetTickCount() - start) < DOOR_SPEED);
     }
-    start = xTaskGetTickCount();
-    while((xTaskGetTickCount() - start) < DOOR_OPEN_DELAY);
+    start = xTaskGetTickCount(); // Get the time first
+    status = CLEAR_DOOR_INT;
+    xQueueSendToFront(e1_queue, (void*)&status, (TickType_t)portMAX_DELAY);
+    while((xTaskGetTickCount() - start) < DOOR_OPEN_DELAY) {
+        if(E1.door_close) {
+            break;
+        }
+    }
 
     // Ensure we don't close the door on someone
-    while(E1.door_i <= LED3) { // See the correlation here?
+    while(E1.door_i < MAX_DOOR_I) {
         if (E1.door_int) { // Open the doors
             return;
         }
@@ -180,6 +194,8 @@ void doorControl(uint8_t open)
         start = xTaskGetTickCount();
         while((xTaskGetTickCount() - start) < DOOR_SPEED);
     }
+    status = CLEAR_DOOR_CLOSE;
+    xQueueSendToFront(e1_queue, (void*)&status, (TickType_t)portMAX_DELAY);
 }
 
 // Lift will move the elevator, send UART updates, and simulate motors
@@ -200,9 +216,22 @@ void liftTask(void *params)
 // The elevator task is in charge of receiving all messages and applying logic
 void elevatorTask(void *params)
 {
+    // Wait for all components to be up
+    while(e1_queue == NULL) {
+        vTaskDelay(DEFAULT_TASK_DELAY);
+    }
     
     for(;;) {
-        // TODO: Do some smart shit here
+        vTaskDelay(DEFAULT_TASK_DELAY);
+        
+        // Check to see if we need to open the doors
+        if(E1.door_int && (E1.direction == DIR_NO)) {
+            do { // openDoors will return on failure
+                openDoors();
+            } while(E1.door_i < MAX_DOOR_I);
+        }
+        
+        // TODO: Add more functionality
     }
 }
 
