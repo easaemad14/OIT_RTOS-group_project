@@ -27,11 +27,11 @@ uint8_t initializeSwitchDriver(void)
 uint8_t readSwitch(uint8_t swNum)
 {
     switch(swNum) {
-        case SWITCH1:
+        case SWITCH_GOTO_P2:
             return !mPORTDReadBits(1 << SWITCH1_BIT_POSITION);
-        case SWITCH2:
+        case SWITCH_GOTO_P1:
             return !mPORTDReadBits(1 << SWITCH2_BIT_POSITION);
-        case SWITCH3:
+        case SWITCH_GOTO_GD:
             return !mPORTDReadBits(1 << SWITCH3_BIT_POSITION);
         case SWITCH_OPEN:
             return !mPORTCReadBits(1 << SWITCH_OPEN_POSITION);

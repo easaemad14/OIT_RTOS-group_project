@@ -16,16 +16,20 @@
 #include "string.h"
 
 
-// Elevator queue messages
-#define GD_UP 0
-#define P1_UP 1
-#define P1_DN 2
-#define P2_DN 3
-#define GOTO_GD 4
-#define GOTO_P1 5
-#define GOTO_P2 6
-#define OPEN_DOOR 7
-#define CLOSE_DOOR 8
+// Elevator queue messages (from UART)
+#define GD_UP 0 // 'z'
+#define P1_UP 1 // 'c'
+#define P1_DN 2 // 'x'
+#define P2_DN 3 // 'v'
+#define OPEN_DOOR 4 // 'm'
+
+// Completed elevator tasks (from elevator)
+#define CLEAR_GD 250
+#define CLEAR_P1_UP 251
+#define CLEAR_P1_DN 252
+#define CLEAR_P2 253
+#define CLEAR_DOOR 254
+#define CMD_NULL 255
 
 
 void create_elevator(void);

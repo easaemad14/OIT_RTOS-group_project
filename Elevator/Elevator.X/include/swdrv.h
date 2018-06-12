@@ -20,9 +20,9 @@
 
 #include "FreeRTOS.h"
 
-#define SWITCH1 0
-#define SWITCH2 1
-#define SWITCH3 2
+#define SWITCH_GOTO_P2 0
+#define SWITCH_GOTO_P1 1
+#define SWITCH_GOTO_GD 2
 #define SWITCH_OPEN 3
 #define SWITCH_CLOSE 4
 

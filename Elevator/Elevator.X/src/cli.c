@@ -1,7 +1,7 @@
 /*******************************************************************************
  * File:        cli.c
- * Author:      Easa El Sirgany
- *              easa.elsirgany@oit.edu
+ * Author:      Charles Bassinger
+ *              charles.bassinger@oit.edu
  * 
  * Description: This is the source file for Command Line Interface
  ******************************************************************************/

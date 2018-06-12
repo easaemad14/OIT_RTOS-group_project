@@ -23,7 +23,7 @@
 #include "swdrv.h"
 #include "uartdrv.h"
 #include "elevator.h"
-#include "controllers.h"
+
 
 /* Hardware configuration. */
 #pragma config FPLLMUL = MUL_20, FPLLIDIV = DIV_2, FPLLODIV = DIV_1, FWDTEN = OFF
@@ -57,11 +57,6 @@ int main(void)
     prvSetupHardware();
 
     // Create all tasks
-    // TODO: Charles to implement
-    //create_controllers(); 
-    
-    
-    // TODO: BillyRayJoeBob to implement
     create_elevator();
     
     // Blast off!

@@ -1,7 +1,7 @@
 /*******************************************************************************
  * File:        uartdrv.c
- * Author:      Easa El Sirgany
- *              easa.elsirgany@oit.edu
+ * Author:      Charles Bassinger
+ *              charles.bassinger@oit.edu
  * 
  * Description: This file contains all the tasks for the uart component of the
  *              third lab.

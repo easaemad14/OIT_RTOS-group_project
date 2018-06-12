@@ -8,8 +8,8 @@
 
 /*******************************************************************************
  * File:        uartdrv.h
- * Author:      Easa El Sirgany
- *              easa.elsirgany@oit.edu
+ * Author:      Charles Bassinger
+ *              charles.bassinger@oit.edu
  * 
  * Description: This is the header file for uartdrv.c, containing all of the 
  *              needed goodies.
