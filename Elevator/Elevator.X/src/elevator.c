@@ -151,7 +151,7 @@ void recvTask(void *params)
         // Set all button vars appropriately
         E1.door_int |= sw_open;
         // Don't close door flag if already closed
-        E1.door_close |= (E1.door_i < MAX_DOOR_I) ? 0 : sw_close;
+        E1.door_close |= (E1.door_i < MAX_DOOR_I) ? sw_close : 0;
         E1.gd_wait |= sw_gd;
         E1.p1_goto |= sw_p1;
         E1.p2_wait |= sw_p2;
