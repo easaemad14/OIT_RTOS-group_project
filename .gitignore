@@ -3,5 +3,7 @@
 *.elf
 *.map
 *.xml
+# Don't ignore the needed config file
+!Elevator/Elevator.X/nbproject/configurations.xml
 *.properties
 *.bash
