@@ -18,6 +18,7 @@
 #include <stdint.h>
 #include "FreeRTOSConfig.h"
 #include "FreeRTOS.h"
+#include "task.h"
 
 #define UART_BAUD_RATE 9600
 #define UART_DELAY 2 / portTICK_RATE_MS
@@ -27,5 +28,6 @@
  * Functions
  */
 void initUART(UART_MODULE umPortNum, uint32_t ui32WantedBaud);
+char UARTGetChar();
 void vUartPutC(UART_MODULE umPortNum, char cByte);
-void vUartPutStr(UART_MODULE umPortNum, char *pString, int iStrLen);
+void vUartPutStr(UART_MODULE umPortNum, char *pString);

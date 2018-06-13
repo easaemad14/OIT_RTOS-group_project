@@ -58,6 +58,7 @@ int main(void)
 
     // Create all tasks
     create_elevator();
+    create_uart();
     
     // Blast off!
     vTaskStartScheduler();

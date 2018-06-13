@@ -21,7 +21,9 @@
 #define P1_UP 1 // 'c'
 #define P1_DN 2 // 'x'
 #define P2_DN 3 // 'v'
-#define OPEN_DOOR 4 // 'm'
+#define OPEN_DOOR 4 
+#define DOOR_INT 5 // 'm'
+#define EMER_STP 6 // 'b' || ES (CLI)
 
 // Completed elevator tasks (from elevator)
 #define CLEAR_GD 100
@@ -30,6 +32,7 @@
 #define CLEAR_P2 103
 #define CLEAR_DOOR_INT 104
 #define CLEAR_DOOR_CLOSE 105
+#define EMER_CLR 106 // 'n' || ER
 
 #define CMD_NULL 255
 
