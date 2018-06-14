@@ -19,6 +19,7 @@
 #include "FreeRTOSConfig.h"
 #include "FreeRTOS.h"
 #include "task.h"
+#include <string.h>
 
 #define UART_BAUD_RATE 9600
 #define UART_DELAY 2 / portTICK_RATE_MS

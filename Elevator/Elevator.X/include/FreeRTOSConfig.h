@@ -103,11 +103,13 @@
 #define configUSE_MALLOC_FAILED_HOOK            1
 #define configUSE_APPLICATION_TASK_TAG          0
 #define configUSE_COUNTING_SEMAPHORES           1
-#define configGENERATE_RUN_TIME_STATS           0
+#define configGENERATE_RUN_TIME_STATS           1
 
 /* Needed for CLI */
 #define configUSE_STATS_FORMATTING_FUNCTIONS    1
 #define configCOMMAND_INT_MAX_OUTPUT_SIZE       300
+#define portCONFIGURE_TIMER_FOR_RUN_TIME_STATS() 1
+#define portGET_RUN_TIME_COUNTER_VALUE()        1
 
 /* Co-routine definitions. */
 #define configUSE_CO_ROUTINES                   0

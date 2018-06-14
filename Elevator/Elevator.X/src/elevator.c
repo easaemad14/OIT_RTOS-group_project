@@ -14,9 +14,8 @@
 #define DIR_UP 0
 #define DIR_DN 1
 #define DIR_NO 2
-#define ABS_MAX_ACCEL 30 // ft/s^2
-#define MAX_SPEED 20
-#define MAX_ACCEL 2
+#define DEFAULT_VEL 10
+#define DEFAULT_ACC 2
 #define GD_FLOOR 0
 #define P1_FLOOR 51
 #define P2_FLOOR 52
@@ -31,26 +30,8 @@
 /**
  * Local Variables
  */
+TaskHandle_t lift_handle; // This task will be started for movement
 QueueHandle_t e1_queue; // Queue for our first elevator
-char status[17];
-
-// Elevator class
-struct elevator {
-    uint8_t direction; // going up, down, or idle, respectively
-    uint8_t rel_pos; // current floor the elevator is on; 0, 50, or 51
-    uint16_t abs_pos; // displacement in feet
-    uint8_t velocity; // Change in displacement
-    uint8_t accel; // Change in velocity
-    uint8_t gd_wait; // Someone is waiting to go up
-    uint8_t p1_wait_up; // Go up from P1
-    uint8_t p1_goto; // Direction doesn't matter
-    uint8_t p1_wait_dn; // Going down from P1
-    uint8_t p2_wait; // Someone is waiting to go down
-    int8_t door_i; // Keep track of door status; signed
-    uint8_t door_int; // Someone got in the way or door open
-    uint8_t door_close; // Close the door
-    uint8_t emer_stop; // Emergency stop
-} E1;
 
 
 /**
@@ -111,13 +92,15 @@ void controlTask(void *params)
     
     e1_queue = xQueueCreate(E_QUEUE_LEN, sizeof(uint8_t));
     configASSERT(e1_queue != NULL);
-
+    
     // Build our elevator defaults
     E1.direction = DIR_NO;
     E1.rel_pos = GD_FLOOR;
     E1.abs_pos = 0;
-    E1.velocity = 0;
-    E1.accel = 0;
+    E1.rel_vel = 0;
+    E1.abs_vel = DEFAULT_VEL;
+    E1.rel_acc = 0;
+    E1.abs_acc = DEFAULT_ACC;
     E1.gd_wait = 0;
     E1.p1_wait_up = 0;
     E1.p1_wait_dn = 0;
@@ -139,49 +122,20 @@ void controlTask(void *params)
         if(xQueueReceive(e1_queue, &buf, 0)) {
             int i;
             for(i = 0; buf[i] != CMD_NULL; i++) {
-                switch(buf[i]) {
-                    case GD_UP:
-                        E1.gd_wait = 1;
-                        break;
-                    case P1_UP:
-                        E1.p1_wait_up = 1;
-                        break;
-                    case P1_DN:
-                        E1.p1_wait_dn = 1;
-                        break;
-                    case P2_DN:
-                        E1.p2_wait = 1;
-                        break;
-                    case OPEN_DOOR:
-                        E1.door_int = 1;
-                        break;
-                    case EMER_STP:
-                        E1.emer_stop = 1;
-                        break;
-                    case CLEAR_GD:
-                        E1.gd_wait = 0;
-                        break;
-                    case CLEAR_P1_UP:
-                        E1.p1_wait_up = 0;
-                        break;
-                    case CLEAR_P1_DN:
-                        E1.p1_wait_dn = 0;
-                        break;
-                    case CLEAR_P2:
-                        E1.p2_wait = 0;
-                        break;
-                    case CLEAR_DOOR_INT:
-                        E1.door_int = 0;
-                        break;
-                    case CLEAR_DOOR_CLOSE:
-                        E1.door_close = 0;
-                        break;
-                    case EMER_CLR:
-                        E1.emer_stop = 0;
-                        break;
-                    default:
-                        for(;;); // WTF?
-                }
+                if(buf[i] == GD_UP)                 E1.gd_wait = 1;
+                else if(buf[i] == P1_UP)            E1.p1_wait_up = 1;
+                else if(buf[i] == P1_DN)            E1.p1_wait_dn = 1;
+                else if(buf[i] == P2_DN)            E1.p2_wait = 1;
+                else if(buf[i] == OPEN_DOOR)        E1.door_int = 1;
+                else if(buf[i] == EMER_STP)         E1.emer_stop = 1;
+                else if(buf[i] == CLEAR_GD)         E1.gd_wait = 0;
+                else if(buf[i] == CLEAR_P1_UP)      E1.p1_wait_up = 0;
+                else if(buf[i] == CLEAR_P1_DN)      E1.p1_wait_dn = 0;
+                else if(buf[i] == CLEAR_P2)         E1.p2_wait = 0;
+                else if(buf[i] == CLEAR_DOOR_INT)   E1.door_int = 0;
+                else if(buf[i] == CLEAR_DOOR_CLOSE) E1.door_close = 0;
+                else if(buf[i] == EMER_CLR)         E1.emer_stop = 0;
+                else for(;;); // WTF
                 
                 buf[i] = CMD_NULL; // Don't repeat
             }
@@ -213,17 +167,19 @@ void controlTask(void *params)
 }
 
 // Lift will move the elevator, send UART updates, and simulate motors
+// This task is started from the elevator task, and destroys itself when done
 void liftTask(void *params)
 {
+    char status[20];
+    strncpy(status, "Floor GD Stopped\r\n\0", sizeof(status)); // Appends zeroes
+    
     for(;;) {
         vTaskDelay(UART_DELAY);
-        
-        strncpy(status, "Floor GD Stopped\0", sizeof(status));
         vUartPutStr(UART1, status);
         
-#if 1 // This doesn't do anything yet...
+        // TODO: Do some lifting breh
+        
         vTaskDelete(NULL);
-#endif
     }
 }
 
@@ -237,6 +193,17 @@ void elevatorTask(void *params)
     
     for(;;) {
         vTaskDelay(DEFAULT_TASK_DELAY);
+        
+        // Don't do anything if we are in emergency stop
+        if(E1.emer_stop) {
+            if(lift_handle == NULL) {
+                if(xTaskCreate(liftTask, "lift", configMINIMAL_STACK_SIZE,
+                        NULL, 1, lift_handle) == pdFAIL) {
+                    for(;;);
+                } // Else, this task checks
+            }
+            while(E1.emer_stop); // We've got nothing to do
+        }
         
         // Check to see if we need to open the doors
         if(E1.door_int && (E1.direction == DIR_NO)) {
@@ -253,7 +220,7 @@ void elevatorTask(void *params)
 void create_elevator(void)
 {
     if(xTaskCreate(controlTask, "controller", configMINIMAL_STACK_SIZE,
-            NULL, 1, NULL) == pdFAIL) {
+            NULL, 2, NULL) == pdFAIL) {
         for(;;);
     }
     

@@ -21,6 +21,7 @@
 #include "FreeRTOS.h"
 #include "FreeRTOS_CLI.h"
 #include "leddrv.h"
+#include "elevator.h"
 
 
 void cli_init();

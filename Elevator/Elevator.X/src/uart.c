@@ -67,6 +67,12 @@ void uartTxTask(void *params)
                 
                 // Null terminate our string and process CLI
                 cli_msg[cli_pos] = '\0';
+                
+                // A little help is always nice :/
+                if(cli_msg[0] == '\0') {
+                    strncpy(cli_msg, "help", 4);
+                }
+                
                 do {
                     cont = FreeRTOS_CLIProcessCommand(cli_msg, cli_buf,
                             sizeof(cli_buf));
@@ -76,7 +82,9 @@ void uartTxTask(void *params)
                 // Transmit another newline for the heck of it and clean
                 vUartPutC(UART1, '\r');
                 vUartPutC(UART1, '\n');
-                memset(cli_msg, 0, sizeof(cli_buf));
+                memset(cli_buf, 0, sizeof(cli_buf));
+                memset(cli_msg, 0, sizeof(cli_msg));
+                cli_pos = 0;
             } else if(islower(tx_buf[0])) { // "button" operation
                 if(tx_buf[0] == 'z')        op = GD_UP;
                 else if(tx_buf[0] == 'x')   op = P1_DN;

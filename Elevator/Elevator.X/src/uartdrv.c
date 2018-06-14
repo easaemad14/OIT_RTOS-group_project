@@ -72,8 +72,7 @@ void vUartPutC(UART_MODULE umPortNum, char cByte)
 void vUartPutStr(UART_MODULE umPortNum, char *pString)
 {
     int i;
-    
-    for(i = 0; isalnum(pString[i]) || isspace(pString[i]); ++i) {
+    for(i = 0; pString[i] != '\0'; i++) {
         vUartPutC(UART1, pString[i]);
     }
 }
