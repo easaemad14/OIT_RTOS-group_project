@@ -28,7 +28,7 @@ void uartRxTask(void *params)
         
         in = UARTGetChar();
         if(uart_tx_queue != NULL) {
-            xQueueSendToBack(uart_tx_queue, (void*)&in, (TickType_t)5);
+            xQueueSendToBack(uart_tx_queue, (void*)&in, (TickType_t)10);
         }
     }
 }
@@ -86,10 +86,10 @@ void uartTxTask(void *params)
                 memset(cli_msg, 0, sizeof(cli_msg));
                 cli_pos = 0;
             } else if(islower(tx_buf[0])) { // "button" operation
-                if(tx_buf[0] == 'z')        op = GD_UP;
-                else if(tx_buf[0] == 'x')   op = P1_DN;
-                else if(tx_buf[0] == 'c')   op = P1_UP;
-                else if(tx_buf[0] == 'v')   op = P2_DN;
+                if(tx_buf[0] == 'z')        op = GD_CALL;
+                else if(tx_buf[0] == 'x')   op = P1_CALL;
+                else if(tx_buf[0] == 'c')   op = P1_CALL;
+                else if(tx_buf[0] == 'v')   op = P2_CALL;
                 else if(tx_buf[0] == 'b')   op = EMER_STP;
                 else if(tx_buf[0] == 'n')   op = EMER_CLR;
                 else if(tx_buf[0] == 'm')   op = DOOR_INT;

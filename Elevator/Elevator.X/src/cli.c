@@ -138,20 +138,20 @@ portBASE_TYPE prvSendToFloorCommand(int8_t *pcWriteBuffer,
     
     switch(floor) {
         case 1:
-            q_mess = GD_UP;
+            q_mess = GD_CALL;
             break;
         case 2:
-            q_mess = P1_GOTO;
+            q_mess = P1_CALL;
             break;
         case 3:
-            q_mess = P2_DN;
+            q_mess = P2_CALL;
             break;
         default:
             return pdFALSE;
     }
     
     if(e1_queue != NULL) {
-        xQueueSendToBack(e1_queue, (void*)&q_mess, (TickType_t)10);
+        xQueueSendToBack(e1_queue, (void*)&q_mess, (TickType_t)portMAX_DELAY);
     }
     
     return pdFALSE;
@@ -164,7 +164,7 @@ portBASE_TYPE prvEmergencyStopCommand(int8_t *pcWriteBuffer,
 {
     q_mess = EMER_STP;
     if(e1_queue != NULL) {
-        xQueueSendToBack(e1_queue, (void*)&q_mess, (TickType_t)10);
+        xQueueSendToBack(e1_queue, (void*)&q_mess, (TickType_t)portMAX_DELAY);
     }
     
     return pdFALSE;
@@ -177,7 +177,7 @@ portBASE_TYPE prvEmergencyClearCommand(int8_t *pcWriteBuffer,
 {
     q_mess = EMER_CLR;
     if(e1_queue != NULL) {
-        xQueueSendToBack(e1_queue, (void*)&q_mess, (TickType_t)10);
+        xQueueSendToBack(e1_queue, (void*)&q_mess, (TickType_t)portMAX_DELAY);
     }
     
     return pdFALSE;
